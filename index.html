@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GLITCH Studio • Sign Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--mag:#d946ef;--vio:#7c3aed;--bg:radial-gradient(circle at top left,#1f0047,#010314 75%);
+      --card:#ffffff0d;--txt:#f4f4f6;font-family:'Poppins',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--bg);color:var(--txt);display:flex;align-items:center;justify-content:center;padding:2rem}
+.card{width:100%;max-width:420px;padding:2.4rem 2rem;text-align:center;background:var(--card);
+      border-radius:20px;border:1px solid #ffffff18;backdrop-filter:blur(16px);box-shadow:0 25px 40px #0006}
+h1 span{color:var(--mag)}
+button,input{width:100%;padding:.9rem 1rem;margin:.45rem 0;border:none;border-radius:12px;font-size:1rem;font-family:inherit}
+button{background:linear-gradient(135deg,var(--mag),var(--vio));color:#fff;font-weight:600;cursor:pointer}
+button:hover{transform:translateY(-2px)}
+input{background:#ffffff14;color:var(--txt);border:1px solid #ffffff24}
+label{display:block;text-align:left;font-size:.8rem;margin:.5rem 0 .15rem}
+.notice{font-size:.75rem;opacity:.8;margin-top:6px}
+.hidden{display:none}
+a{color:var(--mag);font-size:.85rem;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- landing -->
+<div class="card" id="landing">
+  <h1>Welcome to <span>GLITCH Studio</span>.</h1>
+  <p style="margin-top:.5rem;font-size:.95rem;opacity:.85">Write it. Shoot it. Star in it.<br>This is your dimension.</p>
+  <button onclick="swap('dobStage')">Get Started</button>
+  <button onclick="location.href='login.html'">Log In</button>
+</div>
+
+<!-- birthday (age captured, NOT blocked) -->
+<div class="card hidden" id="dobStage">
+  <h2>Your Birthday</h2>
+  <p class="notice">We use this only to filter age-restricted videos.</p>
+  <div id="dobErr" class="notice" style="color:#ff6b6b"></div>
+  <input type="date" id="dobInp">
+  <button id="dobNext">Next</button>
+  <p class="notice"><a href="#" onclick="swap('landing')">← back</a></p>
+</div>
+
+<!-- details -->
+<div class="card hidden" id="detailsStage">
+  <h2>Create Your Pass</h2>
+  <input id="display" placeholder="Display name">
+  <input id="email"   type="email" placeholder="Email">
+  <input id="phone"   type="tel"   placeholder="Phone (optional)">
+  <label>Password</label>
+  <input id="pw1" type="password" placeholder="Password">
+  <label>Confirm Password</label>
+  <input id="pw2" type="password" placeholder="Re-enter password">
+  <button id="finish">Finish</button>
+</div>
+
+<!-- done -->
+<div class="card hidden" id="doneStage">
+  <h2>Account Created ✔️</h2>
+  <p class="notice">Log in now and start uploading.<br><br><a href="login.html">Go to Log In →</a></p>
+</div>
+
+<script>
+const db   = JSON.parse(localStorage.getItem('glitchStudio')) || {users:[]};
+const save = ()=>localStorage.setItem('glitchStudio',JSON.stringify(db));
+const $    = id=>document.getElementById(id);
+const swap = id=>document.querySelectorAll('.card').forEach(c=>c.classList.toggle('hidden',c.id!==id));
+
+if(sessionStorage.getItem('currentUser')) location.href='home.html';
+
+let capturedAge = null;  // store age for later
+
+$('#dobNext').onclick=()=>{
+  const raw=$('dobInp').value;
+  if(!raw){$('dobErr').textContent='Pick a date';return;}
+  capturedAge = Math.floor((Date.now()-new Date(raw))/3.15576e10);
+  swap('detailsStage');
+};
+
+$('#finish').onclick=()=>{
+  const d=$('display').value.trim(), e=$('email').value.trim();
+  const p1=$('pw1').value, p2=$('pw2').value;
+  if(!(d&&e&&p1&&p2&&capturedAge!==null))return alert('Fill all required fields.');
+  if(p1!==p2) return alert('Passwords do not match.');
+  if(db.users.some(u=>u.email===e))return alert('Email already registered.');
+  db.users.push({display:d,email:e,phone:$('phone').value.trim(),
+                 password:p1,role:'user',trust:1,premium:false,age:capturedAge});
+  save();
+  swap('doneStage');
+};
+</script>
+</body>
+</html>
