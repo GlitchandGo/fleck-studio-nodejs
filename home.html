@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Home – GLITCH Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mag:#d946ef;--vio:#7c3aed;--bg:radial-gradient(circle at top left,#1f0047,#010314 75%);
+  --card:#ffffff0d;--txt:#f4f4f6;font-family:'Poppins',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--bg);color:var(--txt);display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;backdrop-filter:blur(12px)}
+select{background:var(--card);border:1px solid #ffffff25;color:var(--txt);padding:.55rem .8rem;border-radius:12px;font-size:.9rem}
+.iconBtn{width:40px;height:40px;margin-left:.7rem;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:linear-gradient(135deg,var(--mag),var(--vio))}
+.iconBtn svg{width:22px;height:22px;fill:#fff}
+main{flex:1;overflow:auto;padding:2rem}
+.grid{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.card{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid #ffffff14;box-shadow:0 8px 16px #0004}
+.thumb{width:100%;height:120px;object-fit:cover}
+.meta{padding:.6rem .8rem;font-size:.8rem}
+.meta span{font-weight:600}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<header>
+  <select id="feedSelect">
+    <option value="all">All</option>
+    <option value="tv">TV</option>
+    <option value="movie">Movies</option>
+    <option value="video">Videos</option>
+    <option value="short">Short Videos</option>
+  </select>
+
+  <div style="display:flex;align-items:center">
+    <button class="iconBtn" id="uploadBtn" title="Upload">
+      <svg viewBox="0 0 24 24"><path d="M12 2l4 4h-3v7h-2V6H8l4-4zm9 13v5H3v-5H1v7h22v-7h-2z"/></svg>
+    </button>
+    <button class="iconBtn" onclick="location.href='accounts.html'" title="Profile">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="grid" id="videoGrid"></div>
+</main>
+
+<!-- hidden file pickers -->
+<input type="file" id="videoFile" accept="video/*" class="hidden">
+<input type="file" id="thumbFile" accept="image/*" class="hidden">
+
+<script>
+/* ─── mini DB + current user ─── */
+const store = JSON.parse(localStorage.getItem('glitchStudio')) || {users:[],videos:[]};
+const save  = ()=>localStorage.setItem('glitchStudio',JSON.stringify(store));
+const me    = store.users.find(u=>u.email===sessionStorage.getItem('currentUser'));
+if(!me){ location.href='login.html'; }
+
+/* rating → minimum age */
+const ratingAge = {A:0, K:7, TW:10, T:13, M:16, X:18};
+
+/* sample filler vids if none exist */
+if(store.videos.length===0){
+  ['video','movie','tv','short'].forEach((t,i)=>{
+    store.videos.push({
+      id:`demo${i}`,type:t,title:`Sample ${t} ${i}`,
+      rating:['A','K','TW','T','M','X'][i%6],
+      thumb:'https://placehold.co/400x225?text=Demo'
+    });
+  });
+  save();
+}
+
+/* feed rendering with age filter */
+const grid=document.getElementById('videoGrid');
+function renderFeed(kind='all'){
+  grid.innerHTML='';
+  store.videos
+    .filter(v=>kind==='all'||v.type===kind)
+    .filter(v=>ratingAge[v.rating] <= me.age) // age gate
+    .forEach(v=>{
+      const c=document.createElement('div');c.className='card';
+      c.innerHTML=`
+        <img class="thumb" src="${v.thumb}" alt="">
+        <div class="meta"><span>${v.title}</span> • ${v.rating}</div>`;
+      grid.appendChild(c);
+    });
+}
+renderFeed();
+document.getElementById('feedSelect').onchange=e=>renderFeed(e.target.value);
+
+/* upload flow */
+const vidInp=document.getElementById('videoFile');
+const thmInp=document.getElementById('thumbFile');
+document.getElementById('uploadBtn').onclick=()=>vidInp.click();
+
+vidInp.onchange=()=>{ if(vidInp.files[0]) thmInp.click(); };
+
+thmInp.onchange=()=>{
+  if(!thmInp.files[0])return;
+  const title = prompt('Title?'); if(!title)return;
+  const type  = prompt('Type (movie|tv|video|short)','video')||'video';
+  const rating= prompt('Rating (A,K,TW,T,M,X)','A')||'A';
+  const vid={
+    id:Date.now(), title, type, rating,
+    thumb:URL.createObjectURL(thmInp.files[0]),
+    ageMinimum: ratingAge[rating] || 0
+  };
+  /* movies / tv need approval, stubbed */
+  if(type==='movie'||type==='tv'){ alert('Upload sent for mod approval.'); }
+  else{
+    store.videos.unshift(vid); save();
+    renderFeed(document.getElementById('feedSelect').value);
+    alert('Uploaded!');
+  }
+  vidInp.value=''; thmInp.value='';
+};
+</script>
+</body>
+</html>
