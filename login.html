@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><title>Log In – GLITCH</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--mag:#d946ef;--vio:#7c3aed;--bg:radial-gradient(circle at bottom right,#001d50,#010314 75%);
+      --card:#ffffff0e;--txt:#f3f4f6;--err:#ff6b6b;font-family:'Poppins',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--bg);color:var(--txt);display:flex;align-items:center;justify-content:center;padding:2rem}
+.card{width:100%;max-width:420px;padding:2.4rem 2rem;text-align:center;background:var(--card);
+      border-radius:20px;border:1px solid #ffffff18;backdrop-filter:blur(14px);box-shadow:0 25px 40px #0006}
+h1 span{color:var(--mag)}
+button,input{width:100%;padding:.9rem 1rem;margin:.45rem 0;border:none;border-radius:12px;font-size:1rem}
+button{background:linear-gradient(135deg,var(--mag),var(--vio));color:#fff;font-weight:600;cursor:pointer}
+button:hover{transform:translateY(-2px)}
+input{background:#ffffff14;color:var(--txt)}
+.error{color:var(--err);margin-bottom:.4rem}
+.hidden{display:none}
+a{color:var(--mag);font-size:.85rem;text-decoration:none}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1><span>GLITCH</span> Log In</h1>
+  <div id="err" class="error hidden"></div>
+  <input id="email" type="email" placeholder="Email">
+  <input id="pass"  type="password" placeholder="Password">
+  <button id="loginBtn">Enter Studio</button>
+  <button style="margin-top:.3rem;background:#444" onclick="location.href='index.html'">← Back</button>
+</div>
+
+<script>
+const db = JSON.parse(localStorage.getItem('glitchStudio')) || {users:[]};
+const $  = id=>document.getElementById(id);
+
+$('#loginBtn').onclick=()=>{
+  const e=$('email').value.trim(), p=$('pass').value;
+  const u=db.users.find(x=>x.email===e && x.password===p);
+  if(!u){ $('#err').textContent='Invalid credentials'; $('#err').classList.remove('hidden'); return; }
+  if(u.banned || (u.suspendedUntil && Date.now()<u.suspendedUntil))
+      return location.href='banned.html';
+  sessionStorage.setItem('currentUser',u.email);
+  location.href='home.html';
+};
+</script>
+</body>
+</html>
