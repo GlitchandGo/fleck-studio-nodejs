@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Upload – GLITCH Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top left, #1f0047, #010314 75%);
+      --txt: #f4f4f6;
+      --mag: #d946ef;
+      --vio: #7c3aed;
+    }
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 { margin-bottom: 1rem; }
+    .upload-container {
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      text-align: center;
+    }
+    #preview {
+      margin-top: 1rem;
+      max-width: 100%;
+      border: 2px solid var(--mag);
+      border-radius: 8px;
+    }
+    input[type="file"] {
+      margin-top: 1rem;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Image Upload</h1>
+  <div class="upload-container">
+    <input type="file" id="imgInput" accept="image/*">
+    <div id="previewContainer">
+      <img id="preview" src="" alt="Image preview" class="hidden">
+    </div>
+  </div>
+  <script>
+    document.getElementById('imgInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if(file){
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const preview = document.getElementById('preview');
+          preview.src = event.target.result;
+          preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
