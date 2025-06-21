@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Content – GLITCH Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mag: #d946ef;
+      --vio: #7c3aed;
+      --bg: radial-gradient(circle at top left, #1f0047, #010314 75%);
+      --txt: #f4f4f6;
+    }
+    * {
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    header {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 1rem;
+    }
+    .content-selection {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      max-width: 600px;
+    }
+    .select-btn {
+      flex: 1 1 45%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      color: var(--txt);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .select-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Check if logged in; if not, redirect to index.html
+    if (!sessionStorage.getItem('currentUser')) {
+      location.href = 'index.html';
+    }
+  </script>
+  <header>
+    <h1>Select Content Type to Upload</h1>
+  </header>
+  <div class="content-selection">
+    <button class="select-btn" onclick="location.href='upload-tv.html'">TV</button>
+    <button class="select-btn" onclick="location.href='upload-movie.html'">Movie</button>
+    <button class="select-btn" onclick="location.href='upload-video.html'">Video</button>
+    <button class="select-btn" onclick="location.href='upload-short.html'">Short</button>
+  </div>
+</body>
+</html>
