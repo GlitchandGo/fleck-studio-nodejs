@@ -1,124 +1,603 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Home – GLITCH Studio</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --mag:#d946ef;--vio:#7c3aed;--bg:radial-gradient(circle at top left,#1f0047,#010314 75%);
-  --card:#ffffff0d;--txt:#f4f4f6;font-family:'Poppins',sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{min-height:100vh;background:var(--bg);color:var(--txt);display:flex;flex-direction:column}
-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.4rem;backdrop-filter:blur(12px)}
-select{background:var(--card);border:1px solid #ffffff25;color:var(--txt);padding:.55rem .8rem;border-radius:12px;font-size:.9rem}
-.iconBtn{width:40px;height:40px;margin-left:.7rem;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:linear-gradient(135deg,var(--mag),var(--vio))}
-.iconBtn svg{width:22px;height:22px;fill:#fff}
-main{flex:1;overflow:auto;padding:2rem}
-.grid{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
-.card{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid #ffffff14;box-shadow:0 8px 16px #0004}
-.thumb{width:100%;height:120px;object-fit:cover}
-.meta{padding:.6rem .8rem;font-size:.8rem}
-.meta span{font-weight:600}
-.hidden{display:none}
-</style>
+  <meta charset="UTF-8">
+  <title>Home – GLITCH Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mag: #d946ef;
+      --vio: #7c3aed;
+      --bg: radial-gradient(circle at top left, #1f0047, #010314 75%);
+      --txt: #f4f4f6;
+      --header-height: 60px;
+      --footer-height: 70px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    header {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      background: transparent;
+      position: relative;
+      z-index: 2;
+    }
+    .hamburger {
+      display: inline-block;
+      cursor: pointer;
+      width: 30px;
+      height: 22px;
+      position: relative;
+    }
+    .hamburger span {
+      display: block;
+      position: absolute;
+      height: 3px;
+      width: 100%;
+      background: var(--txt);
+      border-radius: 3px;
+      left: 0;
+      transition: 0.3s ease;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 9px; }
+    .hamburger span:nth-child(3) { top: 18px; }
+    button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    button:focus { outline: none; }
+    .user-btn {
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--txt);
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .user-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 8px rgba(217,70,239,0.8);
+    }
+    .user-btn svg {
+      width: 100%;
+      height: 100%;
+      fill: var(--txt);
+    }
+    /* Dropdown Menu */
+    .dropdown-menu {
+      position: absolute;
+      top: var(--header-height);
+      left: 1rem;
+      background: rgba(1,1,20,0.95);
+      border: 1px solid var(--txt);
+      border-radius: 8px;
+      padding: 8px 0;
+      display: none;
+      z-index: 10;
+      min-width: 180px;
+    }
+    .dropdown-menu.active { display: block; }
+    .dropdown-menu button {
+      width: 100%;
+      text-align: left;
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      color: var(--txt);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dropdown-menu button:hover {
+      background: rgba(217,70,239,0.2);
+    }
+    /* Main Grid */
+    main {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .grid {
+      display: grid;
+      gap: 1.2rem;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    .thumb {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      cursor: pointer;
+    }
+    .meta {
+      padding: 8px;
+      font-size: 14px;
+    }
+    /* Reaction Section */
+    .reactions {
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 0;
+      background: rgba(0,0,0,0.2);
+    }
+    .reaction-btn {
+      background: none;
+      border: none;
+      color: var(--txt);
+      font-size: 18px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .reaction-btn:hover { transform: scale(1.1); }
+    .reaction-btn span {
+      font-size: 14px;
+      margin-left: 2px;
+    }
+    .extra-reactions {
+      display: flex;
+      justify-content: space-around;
+      padding: 4px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    /* Reaction Echo Animation */
+    .reaction-echo {
+      position: absolute;
+      font-size: 24px;
+      animation: echo 0.6s ease-out;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+    @keyframes echo {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+    /* Comment Modal */
+    .comment-modal {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      background: rgba(1,1,20,0.95);
+      border: 1px solid var(--txt);
+      border-radius: 12px;
+      padding: 1rem;
+      z-index: 20;
+    }
+    .comment-modal .comment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .comment-modal .comment-header span { font-weight: 600; font-size: 16px; }
+    .comment-modal .close-comment {
+      background: none;
+      border: none;
+      font-size: 16px;
+      color: var(--txt);
+      cursor: pointer;
+    }
+    .comment-modal .comment-filter {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 0.5rem;
+    }
+    .comment-modal .comment-filter .filter {
+      background: none;
+      border: none;
+      color: var(--txt);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .comment-list {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 0.5rem;
+    }
+    .comment {
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 14px;
+    }
+    .comment:last-child { border-bottom: none; }
+    .comment .comment-actions {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .comment .pinned-icon {
+      color: var(--mag);
+      font-weight: bold;
+    }
+    .comment-input {
+      display: flex;
+      gap: 10px;
+    }
+    .comment-input input[type="text"] {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      background: rgba(255,255,255,0.05);
+      color: var(--txt);
+    }
+    .comment-input button {
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: var(--txt);
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .hidden { display: none; }
+    /* Footer Navigation */
+    footer {
+      height: var(--footer-height);
+      background: transparent;
+      border-top: 1px solid var(--txt);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--txt);
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .nav-btn:hover { transform: scale(1.05); color: var(--mag); }
+    .nav-btn.plus {
+      font-size: 24px;
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--txt);
+    }
+  </style>
 </head>
 <body>
-
-<header>
-  <select id="feedSelect">
-    <option value="all">All</option>
-    <option value="tv">TV</option>
-    <option value="movie">Movies</option>
-    <option value="video">Videos</option>
-    <option value="short">Short Videos</option>
-  </select>
-
-  <div style="display:flex;align-items:center">
-    <button class="iconBtn" id="uploadBtn" title="Upload">
-      <svg viewBox="0 0 24 24"><path d="M12 2l4 4h-3v7h-2V6H8l4-4zm9 13v5H3v-5H1v7h22v-7h-2z"/></svg>
+  <script>
+    // Redirect to index.html if not logged in
+    if (!sessionStorage.getItem('currentUser')) {
+      location.href = 'index.html';
+    }
+  </script>
+  <header>
+    <!-- Hamburger Menu -->
+    <button id="dropdownBtn" title="Menu">
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </button>
-    <button class="iconBtn" onclick="location.href='accounts.html'" title="Profile">
-      <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/></svg>
+    <!-- User Icon (redirects to accounts.html) -->
+    <button class="user-btn" id="profileBtn" title="Profile" onclick="location.href='accounts.html'">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 12c2.209 0 4-1.791 4-4s-1.791-4-4-4-4 1.791-4 4 1.791 4 4 4zm0 2c-2.67 0-8 1.338-8 4v2h16v-2c0-2.662-5.33-4-8-4z"/>
+      </svg>
     </button>
-  </div>
-</header>
-
-<main>
-  <div class="grid" id="videoGrid"></div>
-</main>
-
-<!-- hidden file pickers -->
-<input type="file" id="videoFile" accept="video/*" class="hidden">
-<input type="file" id="thumbFile" accept="image/*" class="hidden">
-
-<script>
-/* ─── mini DB + current user ─── */
-const store = JSON.parse(localStorage.getItem('glitchStudio')) || {users:[],videos:[]};
-const save  = ()=>localStorage.setItem('glitchStudio',JSON.stringify(store));
-const me    = store.users.find(u=>u.email===sessionStorage.getItem('currentUser'));
-if(!me){ location.href='login.html'; }
-
-/* rating → minimum age */
-const ratingAge = {A:0, K:7, TW:10, T:13, M:16, X:18};
-
-/* sample filler vids if none exist */
-if(store.videos.length===0){
-  ['video','movie','tv','short'].forEach((t,i)=>{
-    store.videos.push({
-      id:`demo${i}`,type:t,title:`Sample ${t} ${i}`,
-      rating:['A','K','TW','T','M','X'][i%6],
-      thumb:'https://placehold.co/400x225?text=Demo'
+    <!-- Dropdown Menu (includes Loop Memory) -->
+    <div id="dropdownMenu" class="dropdown-menu">
+      <button onclick="location.href='home.html'">Home</button>
+      <button onclick="alert('Browse by Genre');">Browse by Genre</button>
+      <button onclick="alert('My Uploads');">My Uploads</button>
+      <button onclick="alert('Watch Later');">Watch Later</button>
+      <button onclick="alert('Favorites');">Favorites</button>
+      <button onclick="location.href='loop-memory.html'">Loop Memory</button>
+    </div>
+  </header>
+  
+  <main>
+    <!-- Video Grid -->
+    <div class="grid" id="videoGrid">
+      <!-- Example Video Card with data-video-id -->
+      <div class="card" data-video-id="video1">
+        <img class="thumb" src="https://placehold.co/400x225?text=Demo" alt="Demo Video" onclick="handleView(this)">
+        <div class="meta">
+          <span>Sample Video 1</span> • T
+        </div>
+        <!-- Reaction Controls -->
+        <div class="reactions">
+          <button class="reaction-btn like-btn" data-video-id="video1">👍 <span class="like-count">0</span></button>
+          <button class="reaction-btn dislike-btn" data-video-id="video1">👎 <span class="dislike-count">0</span></button>
+          <button class="reaction-btn comment-btn" data-video-id="video1">💬 <span class="comment-count">0</span></button>
+        </div>
+        <!-- Extra Reactions for Videos/Shorts -->
+        <div class="extra-reactions">
+          <button class="reaction-btn extra-btn" data-reaction="😊" data-video-id="video1">😊</button>
+          <button class="reaction-btn extra-btn" data-reaction="❤️" data-video-id="video1">❤️</button>
+          <button class="reaction-btn extra-btn" data-reaction="😭" data-video-id="video1">😭</button>
+          <button class="reaction-btn extra-btn" data-reaction="😂" data-video-id="video1">😂</button>
+          <button class="reaction-btn extra-btn" data-reaction="😡" data-video-id="video1">😡</button>
+          <!-- Shadow Casting Button -->
+          <button class="reaction-btn shadow-btn" data-video-id="video1">🕳️</button>
+        </div>
+        <!-- Comment Modal (hidden by default) -->
+        <div class="comment-modal hidden" data-video-id="video1">
+          <div class="comment-header">
+            <span>Comments</span>
+            <button class="close-comment">x</button>
+          </div>
+          <div class="comment-filter">
+            <button class="filter sort-liked" data-video-id="video1">Most Liked</button>
+            <button class="filter sort-recent" data-video-id="video1">Recent</button>
+          </div>
+          <div class="comment-list" data-video-id="video1">
+            <!-- Comments will be dynamically appended here -->
+          </div>
+          <div class="comment-input">
+            <input type="text" placeholder="Add a comment..." data-video-id="video1">
+            <button class="submit-comment" data-video-id="video1">Submit</button>
+          </div>
+        </div>
+      </div>
+      <!-- Additional video cards can be added here -->
+    </div>
+  </main>
+  
+  <footer>
+    <button class="nav-btn" id="moviesBtn">
+      <span>Movies</span>
+    </button>
+    <button class="nav-btn" id="tvBtn">
+      <span>TV</span>
+    </button>
+    <button class="nav-btn plus" id="createBtn">
+      <span>+</span>
+    </button>
+    <button class="nav-btn" id="videosBtn">
+      <span>Videos</span>
+    </button>
+    <button class="nav-btn" id="shortsBtn">
+      <span>Shorts</span>
+    </button>
+  </footer>
+  
+  <script>
+    // Toggle dropdown on hamburger click
+    document.getElementById('dropdownBtn').addEventListener('click', function () {
+      var menu = document.getElementById('dropdownMenu');
+      menu.classList.toggle('active');
     });
-  });
-  save();
-}
+    
+    // Redirect "+" button to create.html
+    document.getElementById('createBtn').onclick = () => {
+      location.href = 'create.html';
+    };
 
-/* feed rendering with age filter */
-const grid=document.getElementById('videoGrid');
-function renderFeed(kind='all'){
-  grid.innerHTML='';
-  store.videos
-    .filter(v=>kind==='all'||v.type===kind)
-    .filter(v=>ratingAge[v.rating] <= me.age) // age gate
-    .forEach(v=>{
-      const c=document.createElement('div');c.className='card';
-      c.innerHTML=`
-        <img class="thumb" src="${v.thumb}" alt="">
-        <div class="meta"><span>${v.title}</span> • ${v.rating}</div>`;
-      grid.appendChild(c);
+    // Reaction logic: Only one reaction (like/dislike) per video
+    function handleReaction(videoId, type, btn) {
+      let key = 'reaction_' + videoId;
+      if (localStorage.getItem(key)) {
+        alert('You have already reacted to this video.');
+        return;
+      }
+      if (type === 'like') {
+        let span = btn.querySelector('.like-count');
+        span.textContent = parseInt(span.textContent) + 1;
+      } else if (type === 'dislike') {
+        let span = btn.querySelector('.dislike-count');
+        span.textContent = parseInt(span.textContent) + 1;
+      }
+      localStorage.setItem(key, type);
+      reactionEcho(btn, type === 'like' ? '👍' : '👎');
+    }
+    
+    // Event listeners for like/dislike buttons
+    document.querySelectorAll('.like-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        let videoId = this.dataset.videoId;
+        handleReaction(videoId, 'like', this);
+      });
     });
-}
-renderFeed();
-document.getElementById('feedSelect').onchange=e=>renderFeed(e.target.value);
-
-/* upload flow */
-const vidInp=document.getElementById('videoFile');
-const thmInp=document.getElementById('thumbFile');
-document.getElementById('uploadBtn').onclick=()=>vidInp.click();
-
-vidInp.onchange=()=>{ if(vidInp.files[0]) thmInp.click(); };
-
-thmInp.onchange=()=>{
-  if(!thmInp.files[0])return;
-  const title = prompt('Title?'); if(!title)return;
-  const type  = prompt('Type (movie|tv|video|short)','video')||'video';
-  const rating= prompt('Rating (A,K,TW,T,M,X)','A')||'A';
-  const vid={
-    id:Date.now(), title, type, rating,
-    thumb:URL.createObjectURL(thmInp.files[0]),
-    ageMinimum: ratingAge[rating] || 0
-  };
-  /* movies / tv need approval, stubbed */
-  if(type==='movie'||type==='tv'){ alert('Upload sent for mod approval.'); }
-  else{
-    store.videos.unshift(vid); save();
-    renderFeed(document.getElementById('feedSelect').value);
-    alert('Uploaded!');
-  }
-  vidInp.value=''; thmInp.value='';
-};
-</script>
+    document.querySelectorAll('.dislike-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        let videoId = this.dataset.videoId;
+        handleReaction(videoId, 'dislike', this);
+      });
+    });
+    
+    // Extra reaction buttons with echo
+    document.querySelectorAll('.extra-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        let reaction = this.dataset.reaction;
+        reactionEcho(this, reaction);
+        // Optionally, record extra reaction counts in localStorage.
+      });
+    });
+    
+    // Shadow casting (anonymous compliment)
+    document.querySelectorAll('.shadow-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        let videoId = this.dataset.videoId;
+        let message = prompt('Enter your anonymous compliment:');
+        if (message && message.trim() !== '') {
+          let key = 'shadowcasts_' + videoId;
+          let casts = JSON.parse(localStorage.getItem(key) || '[]');
+          casts.push(message);
+          localStorage.setItem(key, JSON.stringify(casts));
+          reactionEcho(this, '🕳️');
+          alert('Your shadow has been cast.');
+        }
+      });
+    });
+    
+    // Toggle comment modal visibility
+    document.querySelectorAll('.comment-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        let card = this.closest('.card');
+        let modal = card.querySelector('.comment-modal');
+        modal.classList.toggle('hidden');
+      });
+    });
+    
+    // Close comment modal
+    document.querySelectorAll('.close-comment').forEach(btn => {
+      btn.addEventListener('click', function () {
+        this.closest('.comment-modal').classList.add('hidden');
+      });
+    });
+    
+    // Comment submission with 1-minute cooldown
+    function canComment(videoId) {
+      let lastTime = localStorage.getItem('lastCommentTime_' + videoId);
+      if (lastTime) {
+        let diff = Date.now() - parseInt(lastTime);
+        if (diff < 60000) {
+          alert('Please wait a minute before commenting again.');
+          return false;
+        }
+      }
+      return true;
+    }
+    document.querySelectorAll('.submit-comment').forEach(btn => {
+      btn.addEventListener('click', function () {
+        let videoId = this.dataset.videoId;
+        if (!canComment(videoId)) return;
+        let modal = this.closest('.comment-modal');
+        let input = modal.querySelector('input[type="text"]');
+        let commentText = input.value.trim();
+        if (commentText === "") return;
+        let key = 'comments_' + videoId;
+        let comments = JSON.parse(localStorage.getItem(key) || '[]');
+        let commentObj = { text: commentText, likes: 0, dislikes: 0, timestamp: Date.now(), pinned: false };
+        comments.push(commentObj);
+        localStorage.setItem(key, JSON.stringify(comments));
+        appendComment(modal.querySelector('.comment-list'), commentObj);
+        let countSpan = document.querySelector(`.card[data-video-id="${videoId}"] .comment-btn span`);
+        countSpan.textContent = parseInt(countSpan.textContent) + 1;
+        localStorage.setItem('lastCommentTime_' + videoId, Date.now());
+        input.value = "";
+      });
+    });
+    
+    // Append comment to comment list
+    function appendComment(listElem, commentObj) {
+      let commentDiv = document.createElement('div');
+      commentDiv.classList.add('comment');
+      commentDiv.innerHTML = `
+        <span class="comment-text">${commentObj.text}</span>
+        <div class="comment-actions">
+          <button class="comment-like">👍 <span>${commentObj.likes}</span></button>
+          <button class="comment-dislike">👎 <span>${commentObj.dislikes}</span></button>
+          <button class="comment-reply">Reply</button>
+          <span class="pinned-icon ${commentObj.pinned ? '' : 'hidden'}">📌</span>
+        </div>
+      `;
+      listElem.appendChild(commentDiv);
+      commentDiv.querySelector('.comment-like').addEventListener('click', function () {
+        commentObj.likes += 1;
+        this.querySelector('span').textContent = commentObj.likes;
+        reactionEcho(this, '👍');
+      });
+      commentDiv.querySelector('.comment-dislike').addEventListener('click', function () {
+        commentObj.dislikes += 1;
+        this.querySelector('span').textContent = commentObj.dislikes;
+        reactionEcho(this, '👎');
+      });
+      commentDiv.querySelector('.comment-reply').addEventListener('click', function () {
+        let reply = prompt('Enter your reply:');
+        if (reply && reply.trim() !== '') {
+          alert('Reply functionality is not fully implemented yet.');
+          // Future enhancement: Save and display replies.
+        }
+      });
+    }
+    
+    // Reaction Echo: shows an animated icon effect
+    function reactionEcho(element, icon) {
+      let echo = document.createElement('div');
+      echo.textContent = icon;
+      echo.classList.add('reaction-echo');
+      let rect = element.getBoundingClientRect();
+      echo.style.left = (rect.width / 2 - 10) + 'px';
+      echo.style.top = (-20) + 'px';
+      element.parentElement.appendChild(echo);
+      setTimeout(() => { echo.remove(); }, 600);
+    }
+    
+    // Video view count and Loop Memory
+    function handleView(imgElem) {
+      let card = imgElem.closest('.card');
+      let videoId = card.dataset.videoId;
+      let viewKey = 'view_' + videoId;
+      let views = parseInt(localStorage.getItem(viewKey) || '0') + 1;
+      localStorage.setItem(viewKey, views);
+      if (views >= 3) {
+        let loopMemory = JSON.parse(localStorage.getItem('loopMemory') || '[]');
+        if (!loopMemory.includes(videoId)) {
+          loopMemory.push(videoId);
+          localStorage.setItem('loopMemory', JSON.stringify(loopMemory));
+          alert('This video has been added to your Loop Memory archive!');
+        }
+      }
+    }
+    
+    // Image Upload Script: (hidden file input created if not present)
+    if (!document.getElementById('imageInput')) {
+      let fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.id = 'imageInput';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+      fileInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            let preview = document.getElementById('imagePreview');
+            if (!preview) {
+              preview = document.createElement('img');
+              preview.id = 'imagePreview';
+              preview.style.maxWidth = '100%';
+              document.body.appendChild(preview);
+            }
+            preview.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  </script>
 </body>
 </html>
