@@ -1,329 +1,434 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Profile – GLITCH Studio</title>
+  <meta charset="UTF-8">
+  <title>Accounts – GLITCH Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-  :root{
-    --mag:#d946ef;
-    --vio:#7c3aed;
-    --green:#22c55e;
-    --danger:#ef4444;
-    --bg:#0b0b13;
-    --card:#ffffff12;
-    --txt:#f3f3f5;
-    font-family:'Poppins',sans-serif;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
+    :root {
+      --mag: #d946ef;
+      --vio: #7c3aed;
+      --green: #22c55e;
+      --danger: #ef4444;
+      --bg: #0b0b13;
+      --card: #ffffff12;
+      --txt: #f3f3f5;
+      font-family: 'Poppins', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body{
-    min-height:100vh;
-    background:var(--bg);
-    color:var(--txt);
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    padding:3rem 1rem;
-  }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--txt);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 3rem 1rem;
+    }
 
-  /* ─────────── profile card ─────────── */
-  .card{
-    width:100%;
-    max-width:480px;
-    background:var(--card);
-    border:1px solid #ffffff1f;
-    border-radius:22px;
-    padding:2.25rem 2rem;
-    text-align:center;
-    backdrop-filter:blur(18px);
-    box-shadow:0 24px 44px #0006;
-  }
-  h1 span{color:var(--mag)}
-  p{margin-top:.45rem;font-size:.9rem;opacity:.8}
+    /* ───────── profile card ───────── */
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card);
+      border: 1px solid #ffffff1f;
+      border-radius: 22px;
+      padding: 2.3rem 2rem;
+      text-align: center;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 44px #0006;
+    }
+    h1 { font-size: 2rem; }
+    /* Instead of an icon, we now use the user's display name appended with "'s Profile" */
+    h1 span { color: var(--mag); }
+    p { margin-top: 0.45rem; font-size: 0.9rem; opacity: 0.8; }
 
-  button{
-    width:100%;
-    padding:.85rem 1rem;
-    margin:.45rem 0;
-    border:none;
-    border-radius:14px;
-    font-size:1rem;
-    font-weight:600;
-    color:#fff;
-    cursor:pointer;
-    transition:transform .15s;
-    background:linear-gradient(135deg,var(--mag),var(--vio));
-  }
-  button:hover{transform:translateY(-2px)}
-  button.gray{background:#444}
-  button.danger{background:var(--danger)}
-  .hidden{display:none}
+    button {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      margin: 0.45rem 0;
+      border: none;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.15s;
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+    }
+    button:hover { transform: translateY(-2px); }
+    button.gray { background: #444; }
+    button.danger { background: var(--danger); }
+    .hidden { display: none; }
 
-  /* ─────────── hacker-green overlay ─────────── */
-  #overlay{
-    position:fixed;
-    inset:0;
-    background:#000c;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:10;
-  }
-  .panel{
-    background:#061107;
-    color:#d1fadf;
-    border:2px solid #16a34a;
-    width:92%;
-    max-width:560px;
-    max-height:88vh;
-    overflow:auto;
-    padding:1.6rem 1.8rem;
-    border-radius:12px;
-    box-shadow:0 0 12px #16a34a88;
-    font-size:.95rem;
-  }
-  .panel h2{
-    color:#22c55e;
-    margin-bottom:1rem;
-    font-weight:600;
-    text-align:center;
-  }
-  .panel button{
-    background:#073b0c;
-    border:1px solid #22c55e;
-    padding:.5rem 1rem;
-    margin:.3rem .15rem;
-    color:#d1fadf;
-    font-size:.9rem;
-    width:auto;
-    cursor:pointer;
-  }
-  .panel button:hover{background:#0b5d12}
+    /* thumbnails for pinned vids */
+    .grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 0.8rem;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    .thumb {
+      width: 100%;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .pinCard {
+      background: #ffffff10;
+      border: 1px solid #ffffff24;
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-  .userRow{
-    padding:.55rem .3rem;
-    border-bottom:1px solid #0f4320;
-    cursor:pointer;
-  }
-  .userRow:hover{background:#0e3d19}
+    /* ───────── overlay ───────── */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: #000c;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .panel {
+      background: #061107;
+      color: #d1fadf;
+      border: 2px solid #16a34a;
+      width: 92%;
+      max-width: 560px;
+      max-height: 88vh;
+      overflow: auto;
+      padding: 1.6rem 1.8rem;
+      border-radius: 12px;
+      box-shadow: 0 0 12px #16a34a88;
+      font-size: 0.95rem;
+    }
+    .panel h2 { color: #22c55e; margin-bottom: 1rem; font-weight: 600; text-align: center; }
+    .panel button {
+      background: #073b0c;
+      border: 1px solid #22c55e;
+      padding: 0.5rem 1rem;
+      margin: 0.3rem 0.15rem;
+      color: #d1fadf;
+      font-size: 0.9rem;
+      width: auto;
+      cursor: pointer;
+    }
+    .panel button:hover { background: #0b5d12; }
+    .userRow {
+      padding: 0.55rem 0.3rem;
+      border-bottom: 1px solid #0f4320;
+      cursor: pointer;
+    }
+    .userRow:hover { background: #0e3d19; }
   </style>
 </head>
 <body>
 
-<!-- ─────────── PROFILE ─────────── -->
-<div class="card" id="profileCard">
-  <h1>👤 <span id="dispName"></span></h1>
-  <p id="roleLine"></p>
+  <!-- ───────────── PROFILE ───────────── -->
+  <div class="card" id="profileCard">
+    <!-- Profile title now shows "[USER]'s Profile" -->
+    <h1 id="profileTitle"></h1> 
+    <p id="roleLine"></p>
 
-  <button id="btnLogout">Log Out</button>
+    <button id="btnLogout">Log Out</button>
+    <button id="btnReqMod">Request Moderator Access</button>
+    <button id="btnBuyPrem">Buy Premium</button>
+    <button id="btnUnsubPrem" class="hidden">Unsubscribe from Premium</button>
 
-  <button id="btnReqMod">Request Moderator Access</button>
-  <button id="btnBuyPrem">Buy Premium</button>
-  <button id="btnUnsubPrem" class="hidden">Unsubscribe from Premium</button>
+    <button id="btnChgName" class="gray">Change Username</button>
+    <button id="btnChgPw" class="gray">Change Password</button>
+    <button id="btnDelete" class="danger">Delete Account</button>
 
-  <button id="btnChgPw"  class="gray">Change Password</button>
-  <button id="btnDelete" class="danger">Delete Account</button>
+    <!-- visible only for mod / admin -->
+    <button id="btnModMenu" class="hidden" style="margin-top:1.2rem">Open Mod Menu</button>
 
-  <!-- Visible only for mod / admin -->
-  <button id="btnModMenu" class="hidden" style="margin-top:1.2rem">
-    Open Mod Menu
-  </button>
-</div>
-
-<!-- ─────────── MOD OVERLAY ─────────── -->
-<div id="overlay">
-
-  <!-- MAIN PANEL -->
-  <div class="panel" id="panel-main">
-    <h2>Moderator Console</h2>
-    <button onclick="openUserList()">Manage Users</button>
-    <button onclick="location.href='requests.html'">Manage Requests</button>
-    <button onclick="closeOverlay()">Close</button>
+    <!-- Existing Pinned Videos Section -->
+    <h3 style="margin:1.3rem 0 0.3rem">📌 Pinned Videos</h3>
+    <div id="pinGrid" class="grid"></div>
+    
+    <!-- New Section: Things I've Uploaded -->
+    <h3 style="margin:1.3rem 0 0.3rem">📺 Things I've Uploaded</h3>
+    <div id="uploadedGrid" class="grid"></div>
+    
+    <!-- New Section: History -->
+    <h3 style="margin:1.3rem 0 0.3rem">🕒 History</h3>
+    <div id="historyList"></div>
   </div>
 
-  <!-- USER LIST PANEL -->
-  <div class="panel hidden" id="panel-users">
-    <h2>Select a User</h2>
-    <div id="userList"></div>
-    <button onclick="toPanel('panel-main')">← Back</button>
+  <!-- ───────────── OVERLAY ───────────── -->
+  <div id="overlay">
+    <!-- MAIN -->
+    <div class="panel" id="panel-main">
+      <h2>Moderator Console</h2>
+      <button onclick="openUserList()">Manage Users</button>
+      <button onclick="openPwReqs()">Password Requests</button>
+      <button onclick="closeOverlay()">Close</button>
+    </div>
+
+    <!-- USERS -->
+    <div class="panel hidden" id="panel-users">
+      <h2>Select a User</h2>
+      <div id="userList"></div>
+      <button onclick="toPanel('panel-main')">← Back</button>
+    </div>
+
+    <!-- PER-USER -->
+    <div class="panel hidden" id="panel-actions">
+      <h2 id="uaTitle"></h2>
+      <div id="actionButtons"></div>
+      <button onclick="toPanel('panel-users')">← Back</button>
+    </div>
+
+    <!-- PASSWORD REQUESTS -->
+    <div class="panel hidden" id="panel-requests">
+      <h2>Password Requests</h2>
+      <div id="reqList"></div>
+      <button onclick="toPanel('panel-main')">← Back</button>
+    </div>
   </div>
 
-  <!-- PER-USER ACTIONS PANEL -->
-  <div class="panel hidden" id="panel-actions">
-    <h2 id="uaTitle"></h2>
-    <div id="actionButtons"></div>
-    <button onclick="toPanel('panel-users')">← Back</button>
-  </div>
-</div>
+  <script>
+    /* ───────── helpers & DB scaffold ───────── */
+    const $ = id => document.getElementById(id);
+    const db = JSON.parse(localStorage.getItem('glitchStudio')) || { users: [], videos: [], requests: [], history: [] };
+    const save = () => localStorage.setItem('glitchStudio', JSON.stringify(db));
 
-<script>
-/* ─────────── helpers ─────────── */
-const $  = id=>document.getElementById(id);
-const db = JSON.parse(localStorage.getItem('glitchStudio')) || {users:[]};
-const save = ()=>localStorage.setItem('glitchStudio',JSON.stringify(db));
+    /* current user */
+    const me = db.users.find(u => u.email === sessionStorage.getItem('currentUser'));
+    if (!me) { location.href = 'login.html'; }
+    if (me.banned || (me.suspendedUntil && Date.now() < me.suspendedUntil)) {
+      location.href = 'banned.html';
+    }
 
-/* current user */
-const me = db.users.find(u=>u.email===sessionStorage.getItem('currentUser'));
-if(!me) location.href='login.html';
-if(me.banned || (me.suspendedUntil && Date.now()<me.suspendedUntil))
-  location.href='banned.html';
+    /* ───────── populate profile ───────── */
+    function refreshProfile() {
+      // Set the profile title as "[Display]'s Profile"
+      $('#profileTitle').textContent = me.display + "'s Profile";
+      $('#roleLine').textContent = `Role: ${me.role}${me.premium ? ' • Premium' : ''}`;
+    }
+    refreshProfile();
 
-/* populate profile */
-$('#dispName').textContent = me.display;
-$('#roleLine').textContent = `Role: ${me.role}${me.premium ? ' • Premium' : ''}`;
+    /* pinned vids grid */
+    function renderPins() {
+      const box = $('pinGrid'); 
+      box.innerHTML = '';
+      db.videos.filter(v => me.pinned && me.pinned.includes(v.id)).forEach(v => {
+        const d = document.createElement('div');
+        d.className = 'pinCard';
+        d.innerHTML = `<img class="thumb" src="${v.thumb}" alt="${v.title}"><p style="padding:0.4rem 0.5rem;font-size:0.75rem">${v.title}</p>`;
+        box.appendChild(d);
+      });
+    }
+    renderPins();
 
-if(me.premium){
-  $('#btnBuyPrem').classList.add('hidden');
-  $('#btnUnsubPrem').classList.remove('hidden');
-}
-if(me.role !== 'user'){
-  $('#btnReqMod').classList.add('hidden');
-}
-if(me.role === 'mod' || me.role === 'admin'){
-  $('#btnModMenu').classList.remove('hidden');
-}
+    /* New: Render Things I've Uploaded */
+    function renderUploaded() {
+      const box = $('uploadedGrid');
+      box.innerHTML = '';
+      db.videos.filter(v => v.uploader === me.email).forEach(v => {
+        const d = document.createElement('div');
+        d.className = 'pinCard';
+        d.innerHTML = `<img class="thumb" src="${v.thumb}" alt="${v.title}"><p style="padding:0.4rem 0.5rem;font-size:0.75rem">${v.title}</p>`;
+        box.appendChild(d);
+      });
+    }
+    renderUploaded();
 
-/* ─────────── basic buttons ─────────── */
-$('#btnLogout').onclick = () => {
-  sessionStorage.removeItem('currentUser');
-  location.href = 'index.html';
-};
+    /* New: Render History (assumes db.history is an array of video IDs) */
+    function renderHistory() {
+      const box = $('historyList');
+      box.innerHTML = '';
+      if (db.history && db.history.length > 0) {
+        db.history.forEach(videoId => {
+          const video = db.videos.find(v => v.id === videoId);
+          if (video) {
+            const d = document.createElement('div');
+            d.className = 'userRow';
+            d.style.cursor = 'default';
+            d.textContent = video.title;
+            box.appendChild(d);
+          }
+        });
+      } else {
+        box.innerHTML = '<p>No history available.</p>';
+      }
+    }
+    renderHistory();
 
-$('#btnReqMod').onclick   = () => alert('Moderator request sent to admins!');
-$('#btnBuyPrem').onclick  = () => alert('Premium subscription request sent!');
-$('#btnUnsubPrem').onclick= () => alert('Premium unsubscribe request sent!');
-$('#btnChgPw').onclick    = () => alert('Password-change request submitted!');
+    /* premium toggle visibility */
+    if (me.premium) { $('#btnBuyPrem').classList.add('hidden'); $('#btnUnsubPrem').classList.remove('hidden'); }
+    if (me.role !== 'user') { $('#btnReqMod').classList.add('hidden'); }
+    if (['mod', 'admin'].includes(me.role)) { $('#btnModMenu').classList.remove('hidden'); }
 
-$('#btnDelete').onclick = () => {
-  if(confirm('Deleting your account removes all uploads. Proceed?')){
-    db.users = db.users.filter(u=>u!==me);
-    save();
-    sessionStorage.clear();
-    location.href='index.html';
-  }
-};
+    /* ───────── basic buttons ───────── */
+    $('#btnLogout').onclick = () => { sessionStorage.removeItem('currentUser'); location.href = 'index.html'; };
+    $('#btnReqMod').onclick = () => alert('Moderator request sent!');
+    $('#btnBuyPrem').onclick = () => alert('Premium subscription request sent!');
+    $('#btnUnsubPrem').onclick = () => alert('Premium unsubscribe request sent!');
 
-/* ─────────── MOD MENU ─────────── */
-$('#btnModMenu').onclick = () => {
-  $('#overlay').style.display = 'flex';
-  toPanel('panel-main');
-};
+    /* username change (max 2 per 30 days) */
+    const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
+    function canChangeName() {
+      const cutoff = Date.now() - THIRTY_DAYS;
+      return me.usernameChanges.filter(t => t > cutoff).length < 2;
+    }
+    $('#btnChgName').onclick = () => {
+      if (!canChangeName()) { return alert('Username can only be changed twice per 30 days.'); }
+      const n = prompt('New display name', me.display);
+      if (n && n.trim()) {
+        me.display = n.trim();
+        me.usernameChanges.push(Date.now());
+        save();
+        refreshProfile();
+        alert('Username updated!');
+      }
+    };
 
-function closeOverlay(){
-  $('#overlay').style.display = 'none';
-}
-
-/* panel navigation */
-const panels = ['panel-main','panel-users','panel-actions'];
-function toPanel(id){
-  panels.forEach(p => $(p).classList.toggle('hidden', p !== id));
-}
-
-/* ─────────── USER LIST ─────────── */
-function openUserList(){
-  toPanel('panel-users');
-  const list = $('#userList');
-  list.innerHTML = '';
-  db.users.forEach(u=>{
-    const row = document.createElement('div');
-    row.className = 'userRow';
-    row.textContent = `${u.display} — ${u.role}${u.premium ? ' (P)' : ''}`;
-    row.onclick = ()=> openUserActions(u);
-    list.appendChild(row);
-  });
-}
-
-/* ─────────── USER ACTIONS ─────────── */
-let target = null;
-
-function openUserActions(u){
-  target = u;
-  $('#uaTitle').textContent = `${u.display}  [${u.role}${u.premium?' • Premium':''}]`;
-  const box = $('#actionButtons');
-  box.innerHTML = '';
-
-  /* helper to add buttons */
-  const add = (txt,fn,extraCls='')=>{
-    const b=document.createElement('button');
-    b.textContent = txt;
-    if(extraCls) b.classList.add(extraCls);
-    b.onclick = fn;
-    box.appendChild(b);
-  };
-
-  /* shared actions */
-  add('Delete Account',()=>{
-    if(confirm('Remove user and their uploads?')){
-      db.users = db.users.filter(x=>x!==u);
+    /* password change request */
+    $('#btnChgPw').onclick = () => {
+      if (me.pwReq) { return alert('Password-change request already pending.'); }
+      me.pwReq = true;
+      db.requests.push({ id: Date.now(), type: 'pw', user: me.email, status: 'pending' });
       save();
-      alert('Account deleted.');
-      openUserList();
-    }
-  },'danger');
+      alert('Password-change request submitted for mod approval.');
+    };
 
-  add('Suspend Account', suspendDialog);
-  add('Change Username', ()=>{
-    const n = prompt('New display name', u.display);
-    if(n){ u.display = n; save(); openUserActions(u); }
-  });
-  add('Change Password', ()=>{
-    const n = prompt('New password');
-    if(n){ u.password = n; u.tempPw=''; save(); alert('Password updated'); }
-  });
+    /* delete */
+    $('#btnDelete').onclick = () => {
+      if (confirm('Deleting your account removes all uploads. Proceed?')) {
+        db.users = db.users.filter(u => u !== me);
+        db.videos = db.videos.filter(v => v.uploader !== me.email);
+        save();
+        sessionStorage.clear();
+        location.href = 'index.html';
+      }
+    };
 
-  /* admin-only actions */
-  if(me.role === 'admin'){
-    if(u.role !== 'mod'){
-      add('Grant Moderator', ()=>{
-        u.role = 'mod'; save(); openUserActions(u);
+    /* ───────── overlay navigation ───────── */
+    $('#btnModMenu').onclick = () => { $('#overlay').style.display = 'flex'; toPanel('panel-main'); };
+    function closeOverlay() { $('#overlay').style.display = 'none'; }
+    const panels = ['panel-main', 'panel-users', 'panel-actions', 'panel-requests'];
+    function toPanel(id) { panels.forEach(p => $(p).classList.toggle('hidden', p !== id)); }
+
+    /* ───────── user list ───────── */
+    function openUserList() {
+      toPanel('panel-users');
+      const list = $('userList'); list.innerHTML = '';
+      db.users.forEach(u => {
+        const row = document.createElement('div'); row.className = 'userRow';
+        row.textContent = `${u.display} — ${u.role}${u.premium ? ' (P)' : ''}${u.blocked.includes(me.email) ? ' [blocks you]' : ''}`;
+        row.onclick = () => openUserActions(u);
+        list.appendChild(row);
       });
-    }else{
-      add('Remove Moderator', ()=>{
-        u.role = 'user'; save(); openUserActions(u);
-      }, 'danger');
     }
 
-    if(!u.premium){
-      add('Grant Premium', ()=>{
-        u.premium = true; save(); openUserActions(u);
+    /* ───────── per-user actions ───────── */
+    let target = null;
+    function openUserActions(u) {
+      target = u;
+      $('#uaTitle').textContent = `${u.display}  [${u.role}${u.premium ? ' • Premium' : ''}]`;
+      const box = $('actionButtons'); box.innerHTML = '';
+
+      const add = (txt, fn, cls = '') => {
+        const b = document.createElement('button');
+        b.textContent = txt;
+        if (cls) b.classList.add(cls);
+        b.onclick = fn;
+        box.appendChild(b);
+      };
+
+      /* block / unblock */
+      if (me.email !== u.email) {
+        if (me.blocked.includes(u.email)) {
+          add('Unblock User', () => { me.blocked = me.blocked.filter(e => e !== u.email); save(); alert('Unblocked'); openUserList(); });
+        } else {
+          add('Block User', () => { me.blocked.push(u.email); save(); alert('Blocked'); openUserList(); }, 'danger');
+        }
+      }
+
+      /* standard actions */
+      add('Delete Account', () => {
+        if (confirm('Remove user and their uploads?')) {
+          db.users = db.users.filter(x => x !== u);
+          db.videos = db.videos.filter(v => v.uploader !== u.email);
+          save(); alert('Account deleted.'); openUserList();
+        }
+      }, 'danger');
+
+      add('Suspend Account', suspendDialog);
+      add('Change Username', () => {
+        const n = prompt('New display name', u.display);
+        if (n) { u.display = n; save(); openUserActions(u); }
       });
-    }else{
-      add('Remove Premium', ()=>{
-        u.premium = false; save(); openUserActions(u);
-      }, 'danger');
+      add('Set New Password', () => {
+        const n = prompt('New password');
+        if (n) { u.password = n; u.pwReq = false; save(); alert('Password updated'); }
+      });
+
+      /* admin-only */
+      if (me.role === 'admin') {
+        if (u.role !== 'mod') {
+          add('Grant Moderator', () => { u.role = 'mod'; save(); openUserActions(u); });
+        } else {
+          add('Remove Moderator', () => { u.role = 'user'; save(); openUserActions(u); }, 'danger');
+        }
+        if (!u.premium) {
+          add('Grant Premium', () => { u.premium = true; save(); openUserActions(u); });
+        } else {
+          add('Remove Premium', () => { u.premium = false; save(); openUserActions(u); }, 'danger');
+        }
+      }
+      toPanel('panel-actions');
     }
-  }
 
-  toPanel('panel-actions');
-}
+    /* suspend dialog */
+    function suspendDialog() {
+      const opts = [
+        ['1 Hour', 3600e3],
+        ['24 Hours', 24 * 3600e3],
+        ['3 Days', 3 * 24 * 3600e3],
+        ['7 Days', 7 * 24 * 3600e3],
+        ['14 Days', 14 * 24 * 3600e3],
+        ['30 Days', 30 * 24 * 3600e3],
+        ['Permanent', 'perm']
+      ];
+      let menu = 'Choose suspension length:\n';
+      opts.forEach((o, i) => menu += `[${i}] ${o[0]}\n`);
+      const idx = prompt(menu); if (idx === null) return;
+      const sel = opts[idx]; if (!sel) return alert('Invalid choice.');
+      if (sel[1] === 'perm') { target.banned = true; } else { target.suspendedUntil = Date.now() + sel[1]; }
+      save(); alert(`User suspended: ${sel[0]}`);
+    }
 
-/* ─────────── suspension flow ─────────── */
-function suspendDialog(){
-  const opts = [
-    ['1 Hour', 3600e3],
-    ['24 Hours', 24*3600e3],
-    ['3 Days', 3*24*3600e3],
-    ['7 Days', 7*24*3600e3],
-    ['14 Days',14*24*3600e3],
-    ['30 Days',30*24*3600e3],
-    ['Permanent','perm']
-  ];
-  let menu = 'Choose suspension length:\n';
-  opts.forEach((o,i)=>menu += `[${i}] ${o[0]}\n`);
-  const idx = prompt(menu);
-  if(idx===null) return;
-  const sel = opts[idx];
-  if(!sel) return alert('Invalid choice.');
-  if(sel[1] === 'perm'){
-    target.banned = true;
-  }else{
-    target.suspendedUntil = Date.now() + sel[1];
-  }
-  save();
-  alert(`User suspended: ${sel[0]}`);
-}
-</script>
+    /* ───────── password requests panel ───────── */
+    function openPwReqs() {
+      toPanel('panel-requests');
+      const box = $('reqList'); box.innerHTML = '';
+      db.requests.filter(r => r.type === 'pw' && r.status === 'pending').forEach(r => {
+        const usr = db.users.find(u => u.email === r.user);
+        if (!usr) { r.status = 'gone'; return; }
+        const row = document.createElement('div'); row.className = 'userRow';
+        row.textContent = `${usr.display} (${usr.email}) – wants new password`;
+        row.onclick = () => handlePwReq(r, usr);
+        box.appendChild(row);
+      });
+      if (!box.innerHTML) box.innerHTML = '<p>No pending requests.</p>';
+    }
+
+    function handlePwReq(req, usr) {
+      const newPw = prompt(`Set new password for ${usr.display}:`);
+      if (!newPw) return;
+      usr.password = newPw; usr.pwReq = false;
+      req.status = 'done'; save();
+      alert('Password updated.');
+      openPwReqs();
+    }
+  </script>
+
 </body>
 </html>
