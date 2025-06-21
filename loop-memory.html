@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loop Memory Archive – GLITCH Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mag: #d946ef;
+      --vio: #7c3aed;
+      --bg: radial-gradient(circle at top left, #1f0047, #010314 75%);
+      --txt: #f4f4f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .archive-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .archive-item {
+      background: rgba(255,255,255,0.05);
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      width: 200px;
+      text-align: center;
+    }
+    .archive-item button {
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      color: var(--txt);
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Loop Memory Archive</h1>
+  <div class="archive-list" id="archiveList">
+    <!-- Loop Memory items will be populated here -->
+  </div>
+  <script>
+    let loopMemory = JSON.parse(localStorage.getItem('loopMemory') || '[]');
+    let archiveList = document.getElementById('archiveList');
+    if (loopMemory.length === 0) {
+      archiveList.innerHTML = "<p>No videos in your Loop Memory yet.</p>";
+    } else {
+      loopMemory.forEach(videoId => {
+        let item = document.createElement('div');
+        item.className = 'archive-item';
+        item.innerHTML = `<p>Video ID: ${videoId}</p>
+                          <button onclick="alert('Open video: ${videoId}')">Open Video</button>`;
+        archiveList.appendChild(item);
+      });
+    }
+  </script>
+</body>
+</html>
