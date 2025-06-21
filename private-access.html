@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Private Access – GLITCH Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --mag: #d946ef;
+      --vio: #7c3aed;
+      --bg: radial-gradient(circle at top left, #1f0047, #010314 75%);
+      --txt: #f4f4f6;
+      --card-bg: #ffffff0d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      font-size: 24px;
+      text-align: center;
+    }
+    .user-list {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1rem;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    .user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #ffffff24;
+    }
+    .user-item:last-child {
+      border-bottom: none;
+    }
+    .user-name {
+      font-size: 16px;
+    }
+    .select-btn {
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      color: var(--txt);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 14px;
+    }
+    .select-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .confirm-btn {
+      margin-top: 1rem;
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
+      color: var(--txt);
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .confirm-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Check if logged in; if not, redirect to index.html
+    if (!sessionStorage.getItem('currentUser')) {
+      location.href = 'index.html';
+    }
+  </script>
+  <h1>Select Accounts for Private Content</h1>
+  <div class="user-list">
+    <!-- Simulated list of users; in real use, this would load dynamically -->
+    <div class="user-item">
+      <span class="user-name">User 1</span>
+      <button class="select-btn">Select</button>
+    </div>
+    <div class="user-item">
+      <span class="user-name">User 2</span>
+      <button class="select-btn">Select</button>
+    </div>
+    <div class="user-item">
+      <span class="user-name">User 3</span>
+      <button class="select-btn">Select</button>
+    </div>
+    <div class="user-item">
+      <span class="user-name">User 4</span>
+      <button class="select-btn">Select</button>
+    </div>
+  </div>
+  <button class="confirm-btn" onclick="alert('Private access granted!');">Confirm Access</button>
+</body>
+</html>
