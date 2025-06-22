@@ -421,6 +421,22 @@
       localStorage.setItem(key, type);
       reactionEcho(btn, type === 'like' ? '👍' : '👎');
     }
+
+  window.addEventListener("load", function () {
+    const db = JSON.parse(localStorage.getItem("glitchStudio")) || { users: [] };
+    const email = sessionStorage.getItem("currentUser");
+    const user = db.users.find(u => u.email === email);
+
+    if (!user) {
+      // Optional: Redirect to login if user not found
+      location.href = "login.html";
+      return;
+    }
+
+    if (user.banned || (user.suspendedUntil && Date.now() < user.suspendedUntil)) {
+      location.href = "banned.html";
+    }
+  });
     
     // Event listeners for like/dislike buttons
     document.querySelectorAll('.like-btn').forEach(btn => {
