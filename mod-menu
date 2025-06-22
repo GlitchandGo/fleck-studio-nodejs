@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mod Menu – GLITCH Studio</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #0b0b13; color: #f3f3f5; }
+    button { padding: 0.6rem 1rem; font-size: 1rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Moderator Console</h1>
+  <!-- You may add additional mod options here -->
+  <button id="btnBack">Go Back to Accounts</button>
+  <script>
+    window.onload = function(){
+      document.getElementById("btnBack").addEventListener("click", function(){
+        location.href = "accounts.html";
+      });
+    };
+  </script>
+</body>
+</html>
