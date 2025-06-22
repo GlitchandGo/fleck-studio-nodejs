@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Unsubscribe Premium – GLITCH Studio</title>
+</head>
+<body>
+  <script>
+    window.onload = function(){
+      let db = JSON.parse(localStorage.getItem("glitchStudio")) || {users:[], videos:[], requests:[], history:[]};
+      let email = sessionStorage.getItem("currentUser");
+      if(!email){ location.href="login.html"; return; }
+      let user = db.users.find(u => u.email === email);
+      if(!user){ location.href="login.html"; return; }
+      user.premium = false;
+      localStorage.setItem("glitchStudio", JSON.stringify(db));
+      alert("You have unsubscribed from Premium.");
+      location.href = "accounts.html";
+    };
+  </script>
+</body>
+</html>
