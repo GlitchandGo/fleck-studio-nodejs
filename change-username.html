@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Change Username – GLITCH Studio</title>
+</head>
+<body>
+  <script>
+    window.onload = function(){
+      let db = JSON.parse(localStorage.getItem("glitchStudio")) || {users:[], videos:[], requests:[], history:[]};
+      let email = sessionStorage.getItem("currentUser");
+      if(!email) { location.href="login.html"; return; }
+      let user = db.users.find(u => u.email === email);
+      if(!user){ alert("User not found."); location.href="login.html"; return; }
+      
+      const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
+      user.usernameChanges = user.usernameChanges || [];
+      let cutoff = Date.now() - THIRTY_DAYS;
+      if(user.usernameChanges.filter(t => t > cutoff).length >= 2){
+        alert("Username can only be changed twice per 30 days.");
+        location.href="accounts.html";
+        return;
+      }
+      
+      let newName = prompt("Enter your new display name:", user.display);
+      if(newName && newName.trim()){
+        user.display = newName.trim();
+        user.usernameChanges.push(Date.now());
+        localStorage.setItem("glitchStudio", JSON.stringify(db));
+        alert("Username updated successfully.");
+      }
+      location.href="accounts.html";
+    };
+  </script>
+</body>
+</html>
