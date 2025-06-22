@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Account – GLITCH Studio</title>
+</head>
+<body>
+  <script>
+    window.onload = function(){
+      let db = JSON.parse(localStorage.getItem("glitchStudio")) || {users:[], videos:[], requests:[], history:[]};
+      let email = sessionStorage.getItem("currentUser");
+      if(!email){ location.href="login.html"; return; }
+      let user = db.users.find(u => u.email === email);
+      if(!user){ alert("User not found."); location.href="login.html"; return; }
+      
+      if(!confirm("Are you sure that you would like to delete your account?")){
+        location.href="accounts.html";
+        return;
+      }
+      if(!confirm("Deleting your account will delete all of your uploaded videos, and you may be unable to make a new account. Are you sure?")){
+        location.href="accounts.html";
+        return;
+      }
+      
+      db.users = db.users.filter(u => u.email !== email);
+      db.videos = db.videos.filter(v => v.uploader !== email);
+      localStorage.setItem("glitchStudio", JSON.stringify(db));
+      sessionStorage.removeItem("currentUser");
+      alert("Your account has been deleted.");
+      location.href = "index.html";
+    };
+  </script>
+</body>
+</html>
