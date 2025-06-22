@@ -6,119 +6,193 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    :root{--mag:#d946ef;--vio:#7c3aed;--bg:radial-gradient(circle at top left,#1f0047,#010314 75%);
-          --card:#ffffff0d;--txt:#f4f4f6;font-family:'Poppins',sans-serif}
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{min-height:100vh;background:var(--bg);color:var(--txt);
-         display:flex;align-items:center;justify-content:center;padding:2rem}
-    .card{width:100%;max-width:420px;padding:2.4rem 2rem;text-align:center;background:var(--card);
-          border-radius:20px;border:1px solid #ffffff18;backdrop-filter:blur(16px);
-          box-shadow:0 25px 40px #0006}
-    h1 span{color:var(--mag)}
-    button,input{width:100%;padding:.9rem 1rem;margin:.45rem 0;border:none;
-                 border-radius:12px;font-size:1rem;font-family:inherit}
-    button{background:linear-gradient(135deg,var(--mag),var(--vio));color:#fff;
-           font-weight:600;cursor:pointer;transition:transform .15s}
-    button:hover{transform:translateY(-2px)}
-    input{background:#ffffff14;color:var(--txt);border:1px solid #ffffff24}
-    label{display:block;text-align:left;font-size:.8rem;margin:.5rem 0 .15rem}
-    .notice{font-size:.75rem;opacity:.8;margin-top:6px}
-    .hidden{display:none}
-    a{color:var(--mag);font-size:.85rem;text-decoration:none}
+    :root {
+      --mag: #d946ef;
+      --vio: #7c3aed;
+      --bg: radial-gradient(circle at top left, #1f0047, #010314 75%);
+      --card: #ffffff0d;
+      --txt: #f4f4f6;
+      font-family: 'Poppins', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--txt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 2.4rem 2rem;
+      text-align: center;
+      background: var(--card);
+      border-radius: 20px;
+      border: 1px solid #ffffff18;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 25px 40px #0006;
+    }
+    h1, h2 { margin-bottom: 1rem; }
+    h1 span { color: var(--mag); }
+    input, button {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      margin: 0.45rem 0;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    input {
+      background: #ffffff14;
+      color: var(--txt);
+      border: 1px solid #ffffff24;
+    }
+    button {
+      background: linear-gradient(135deg, var(--mag), var(--vio));
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    button:hover { transform: translateY(-2px); }
+    label { display: block; text-align: left; font-size: 0.8rem; margin: 0.5rem 0 0.15rem; }
+    .notice { font-size: 0.75rem; opacity: 0.8; margin-top: 6px; }
+    .hidden { display: none; }
+    a { color: var(--mag); font-size: 0.85rem; text-decoration: none; }
   </style>
 </head>
 <body>
-
-  <!-- landing -->
+  <!-- Landing Stage -->
   <div class="card" id="landing">
     <h1>Welcome to <span>GLITCH Studio</span>.</h1>
-    <p style="margin-top:.5rem;font-size:.95rem;opacity:.85">
+    <p style="margin-top: 0.5rem; font-size: 0.95rem; opacity: 0.85">
       Write it. Shoot it. Star in it.<br>This is your dimension.
     </p>
     <button id="startBtn">Get Started</button>
     <button onclick="location.href='login.html'">Log In</button>
   </div>
 
-  <!-- birthday -->
+  <!-- Birthday Stage -->
   <div class="card hidden" id="dobStage">
     <h2>Your Birthday</h2>
     <p class="notice">We use this only to filter age-restricted videos.</p>
-    <div id="dobErr" class="notice" style="color:#ff6b6b"></div>
+    <div id="dobErr" class="notice" style="color: #ff6b6b"></div>
     <input type="date" id="dobInp" />
     <button id="dobNext">Next</button>
     <p class="notice"><a href="#" id="dobBack">← back</a></p>
   </div>
 
-  <!-- details -->
+  <!-- Details Stage -->
   <div class="card hidden" id="detailsStage">
     <h2>Create Your Pass</h2>
     <input id="display" placeholder="Display name" />
-    <input id="email"   type="email" placeholder="Email" />
-    <input id="phone"   type="tel"   placeholder="Phone (optional)" />
+    <input id="email" type="email" placeholder="Email" />
+    <input id="phone" type="tel" placeholder="Phone (optional)" />
     <label>Password</label>
     <input id="pw1" type="password" placeholder="Password" />
     <label>Confirm Password</label>
     <input id="pw2" type="password" placeholder="Re-enter password" />
     <button id="finish">Finish & Enter Studio</button>
+    <!-- Extra Admin Sign-Up Button (temporary) -->
+    <button id="finishAdmin" style="margin-top: 0.3rem; background: #7c3aed;">Sign Up with Admin</button>
   </div>
 
-<script>
-const db   = JSON.parse(localStorage.getItem('glitchStudio')) || {users:[],videos:[],requests:[]};
-const save = () => localStorage.setItem('glitchStudio',JSON.stringify(db));
-const $    = id => document.getElementById(id);
-const swap = id => document.querySelectorAll('.card')
-                .forEach(c=>c.classList.toggle('hidden',c.id!==id));
+  <script>
+    // Database and helper functions.
+    const db   = JSON.parse(localStorage.getItem('glitchStudio')) || { users: [], videos: [], requests: [] };
+    const save = () => localStorage.setItem('glitchStudio', JSON.stringify(db));
+    const $    = id => document.getElementById(id);
+    const swap = id => document.querySelectorAll('.card').forEach(c => c.classList.toggle('hidden', c.id !== id));
 
-/* already logged-in users → home */
-if(sessionStorage.getItem('currentUser')) location.href='home.html';
+    // Redirect if already logged in.
+    if (sessionStorage.getItem('currentUser')) location.href = 'home.html';
 
-window.onload = () => {
-  let capturedAge=null;
+    window.onload = () => {
+      let capturedAge = null;
 
-  /* navigation */
-  $('startBtn').onclick = () => swap('dobStage');
-  $('dobBack' ).onclick = e => {e.preventDefault();swap('landing');};
+      // Navigation on the landing stage.
+      $("startBtn").onclick = () => swap("dobStage");
+      $("dobBack").onclick = e => { e.preventDefault(); swap("landing"); };
 
-  /* birthday step */
-  $('dobNext').onclick = () => {
-    const raw=$('dobInp').value;
-    if(!raw) return $('dobErr').textContent='Pick a date';
-    const dob=new Date(raw);
-    if(isNaN(dob)) return $('dobErr').textContent='Invalid date';
-    capturedAge=Math.floor((Date.now()-dob)/3.15576e10);
-    $('dobErr').textContent='';
-    swap('detailsStage');
-  };
+      // Birthday Step.
+      $("dobNext").onclick = () => {
+        const raw = $("dobInp").value;
+        if (!raw) return $("dobErr").textContent = "Pick a date";
+        const dob = new Date(raw);
+        if (isNaN(dob)) return $("dobErr").textContent = "Invalid date";
+        capturedAge = Math.floor((Date.now() - dob) / 3.15576e10);
+        $("dobErr").textContent = "";
+        swap("detailsStage");
+      };
 
-  /* finish sign-up  →  auto-login */
-  $('finish').onclick = () => {
-    if(capturedAge===null)  return alert('Birthday step not complete');
-    const d=$('display').value.trim(),
-          e=$('email').value.trim(),
-          p1=$('pw1').value,
-          p2=$('pw2').value,
-          ph=$('phone').value.trim();
-    if(!(d&&e&&p1&&p2))     return alert('Fill all required fields');
-    if(p1!==p2)             return alert('Passwords do not match');
-    if(db.users.some(u=>u.email===e))
-                            return alert('Email already registered');
+      // Finish sign-up as regular user.
+      $("finish").onclick = () => {
+        if (capturedAge === null) return alert("Birthday step not complete");
+        const d = $("display").value.trim(),
+              e = $("email").value.trim(),
+              p1 = $("pw1").value,
+              p2 = $("pw2").value,
+              ph = $("phone").value.trim();
+        if (!(d && e && p1 && p2)) return alert("Fill all required fields");
+        if (p1 !== p2) return alert("Passwords do not match");
+        if (p1.length < 8) return alert("Password must be at least 8 characters");
+        if (db.users.some(u => u.email === e)) return alert("Email already registered");
 
-    db.users.push({
-      display:d,email:e,phone:ph,password:p1,
-      role:'user',trust:1,premium:false,age:capturedAge,
-      blocked:[],pinned:[],usernameChanges:[],pwReq:false
-    });
-    save();
+        db.users.push({
+          display: d,
+          email: e,
+          phone: ph,
+          password: p1,
+          role: "user",
+          trust: 1,
+          premium: false,
+          age: capturedAge,
+          blocked: [],
+          pinned: [],
+          usernameChanges: [],
+          pwReq: false
+        });
+        save();
+        sessionStorage.setItem("currentUser", e);
+        location.href = "home.html";
+      };
 
-    /* auto-login */
-    sessionStorage.setItem('currentUser', e);
-    location.href='home.html';
+      // Finish sign-up as admin (temporary, for bootstrapping).
+      $("finishAdmin").onclick = () => {
+        if (capturedAge === null) return alert("Birthday step not complete");
+        const d = $("display").value.trim(),
+              e = $("email").value.trim(),
+              p1 = $("pw1").value,
+              p2 = $("pw2").value,
+              ph = $("phone").value.trim();
+        if (!(d && e && p1 && p2)) return alert("Fill all required fields");
+        if (p1 !== p2) return alert("Passwords do not match");
+        if (p1.length < 8) return alert("Password must be at least 8 characters");
+        if (db.users.some(u => u.email === e)) return alert("Email already registered");
 
-    /* if you ever want the old “Done” screen back:
-    swap('doneStage');  // comment-in & remove redirects above
-    */
-  };
-};
-</script>
+        db.users.push({
+          display: d,
+          email: e,
+          phone: ph,
+          password: p1,
+          role: "admin",
+          trust: 9,
+          premium: true,
+          age: capturedAge,
+          blocked: [],
+          pinned: [],
+          usernameChanges: [],
+          pwReq: false
+        });
+        save();
+        sessionStorage.setItem("currentUser", e);
+        location.href = "home.html";
+      };
+    };
+  </script>
 </body>
 </html>
