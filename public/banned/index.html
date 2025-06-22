@@ -1,1 +1,118 @@
-You have been permanently banned for being a dumbahh
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Suspended • Glitch Studio</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #2d004d, #6a00ff);
+      color: #f2f2f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      background: rgba(20, 0, 40, 0.8);
+      border: 2px solid rgba(255, 0, 64, 0.4);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 10px #ff0044, 0 0 20px #6a00ff;
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #ff0044;
+      margin-bottom: 0.5em;
+    }
+
+    p {
+      line-height: 1.5;
+      margin-bottom: 2em;
+    }
+
+    button {
+      background: #ff0044;
+      color: white;
+      border: none;
+      padding: 0.75em 1.5em;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #ff3366;
+    }
+
+    .appeal-form {
+      display: none;
+      text-align: left;
+      margin-top: 2em;
+    }
+
+    .appeal-form label {
+      font-weight: bold;
+      display: block;
+      margin: 1em 0 0.25em;
+    }
+
+    .appeal-form textarea {
+      width: 100%;
+      height: 60px;
+      padding: 0.5em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      resize: vertical;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="ban-screen">
+    <h1>Account Suspended</h1>
+    <p>
+      Your Glitch Studio account has been temporarily suspended.<br />
+      **Reason:** A violation of community standards has triggered this action.<br/>
+      **Duration:** <strong>7 days</strong> (unless successfully appealed).
+    </p>
+
+    <button onclick="showAppeal()">Ban Appeal</button>
+
+    <div class="appeal-form" id="appeal-form">
+      <label for="why-banned">Why do you think your account was suspended?</label>
+      <textarea id="why-banned"></textarea>
+
+      <label for="unsuspend">Why should we consider unsuspending your account?</label>
+      <textarea id="unsuspend"></textarea>
+
+      <label for="future">What will you do differently going forward?</label>
+      <textarea id="future"></textarea>
+
+      <button style="margin-top: 1em;">Submit Appeal</button>
+    </div>
+  </div>
+
+  <script>
+    // Placeholder logic: redirect if user is not banned
+    const isBanned = true; // This should be dynamic based on user status
+
+    if (!isBanned) {
+      window.location.href = "home.html";
+    }
+
+    function showAppeal() {
+      document.getElementById('appeal-form').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
