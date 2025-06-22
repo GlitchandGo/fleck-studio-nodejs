@@ -5,7 +5,6 @@
   <title>Accounts – GLITCH Studio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
     :root {
       --mag: #d946ef;
@@ -18,7 +17,6 @@
       font-family: 'Poppins', sans-serif;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       min-height: 100vh;
       background: var(--bg);
@@ -28,8 +26,6 @@
       align-items: flex-start;
       padding: 3rem 1rem;
     }
-
-    /* ───────── profile card ───────── */
     .card {
       width: 100%;
       max-width: 520px;
@@ -42,10 +38,9 @@
       box-shadow: 0 24px 44px #0006;
     }
     h1 { font-size: 2rem; }
-    /* Instead of an icon, we now use the user's display name appended with "'s Profile" */
+    /* The profile title will display the user's display name plus "'s Profile" */
     h1 span { color: var(--mag); }
     p { margin-top: 0.45rem; font-size: 0.9rem; opacity: 0.8; }
-
     button {
       width: 100%;
       padding: 0.85rem 1rem;
@@ -63,8 +58,6 @@
     button.gray { background: #444; }
     button.danger { background: var(--danger); }
     .hidden { display: none; }
-
-    /* thumbnails for pinned vids */
     .grid {
       display: grid;
       gap: 1rem;
@@ -83,352 +76,121 @@
       border-radius: 10px;
       overflow: hidden;
     }
-
-    /* ───────── overlay ───────── */
-    #overlay {
-      position: fixed;
-      inset: 0;
-      background: #000c;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
-    .panel {
-      background: #061107;
-      color: #d1fadf;
-      border: 2px solid #16a34a;
-      width: 92%;
-      max-width: 560px;
-      max-height: 88vh;
-      overflow: auto;
-      padding: 1.6rem 1.8rem;
-      border-radius: 12px;
-      box-shadow: 0 0 12px #16a34a88;
-      font-size: 0.95rem;
-    }
-    .panel h2 { color: #22c55e; margin-bottom: 1rem; font-weight: 600; text-align: center; }
-    .panel button {
-      background: #073b0c;
-      border: 1px solid #22c55e;
-      padding: 0.5rem 1rem;
-      margin: 0.3rem 0.15rem;
-      color: #d1fadf;
-      font-size: 0.9rem;
-      width: auto;
-      cursor: pointer;
-    }
-    .panel button:hover { background: #0b5d12; }
     .userRow {
       padding: 0.55rem 0.3rem;
       border-bottom: 1px solid #0f4320;
-      cursor: pointer;
+      cursor: default;
+      font-size: 0.9rem;
     }
-    .userRow:hover { background: #0e3d19; }
+    h3 { margin: 1.3rem 0 0.3rem; }
+    a { text-decoration: none; }
   </style>
 </head>
 <body>
-
-  <!-- ───────────── PROFILE ───────────── -->
   <div class="card" id="profileCard">
-    <!-- Profile title now shows "[USER]'s Profile" -->
-    <h1 id="profileTitle"></h1> 
+    <h1 id="profileTitle"></h1>
     <p id="roleLine"></p>
-
-    <button id="btnLogout">Log Out</button>
-    <button id="btnReqMod">Request Moderator Access</button>
-    <button id="btnBuyPrem">Buy Premium</button>
-    <button id="btnUnsubPrem" class="hidden">Unsubscribe from Premium</button>
-
-    <button id="btnChgName" class="gray">Change Username</button>
-    <button id="btnChgPw" class="gray">Change Password</button>
-    <button id="btnDelete" class="danger">Delete Account</button>
-
-    <!-- visible only for mod / admin -->
-    <button id="btnModMenu" class="hidden" style="margin-top:1.2rem">Open Mod Menu</button>
-
-    <!-- Existing Pinned Videos Section -->
-    <h3 style="margin:1.3rem 0 0.3rem">📌 Pinned Videos</h3>
+    <!-- Each button is now wrapped within an anchor linking to its file. -->
+    <a href="logout.html"><button id="btnLogout">Log Out</button></a>
+    <a href="req-mod-access.html"><button id="btnReqMod">Request Moderator Access</button></a>
+    <a href="buy-premium.html"><button id="btnBuyPrem">Buy Premium</button></a>
+    <a href="unsub-premium.html"><button id="btnUnsubPrem" class="hidden">Unsubscribe from Premium</button></a>
+    <a href="change-username.html"><button id="btnChgName" class="gray">Change Username</button></a>
+    <a href="change-password.html"><button id="btnChgPw" class="gray">Change Password</button></a>
+    <a href="delete-account.html"><button id="btnDelete" class="danger">Delete Account</button></a>
+    <a href="go-back.html"><button id="btnGoBack" class="gray">Go Back</button></a>
+    <a href="mod-menu.html"><button id="btnModMenu" class="hidden" style="margin-top:1.2rem">Open Mod Menu</button></a>
+    
+    <h3>📌 Pinned Videos</h3>
     <div id="pinGrid" class="grid"></div>
     
-    <!-- New Section: Things I've Uploaded -->
-    <h3 style="margin:1.3rem 0 0.3rem">📺 Things I've Uploaded</h3>
+    <h3>📺 Things I've Uploaded</h3>
     <div id="uploadedGrid" class="grid"></div>
     
-    <!-- New Section: History -->
-    <h3 style="margin:1.3rem 0 0.3rem">🕒 History</h3>
+    <h3>🕒 History</h3>
     <div id="historyList"></div>
   </div>
-
-  <!-- ───────────── OVERLAY ───────────── -->
-  <div id="overlay">
-    <!-- MAIN -->
-    <div class="panel" id="panel-main">
-      <h2>Moderator Console</h2>
-      <button onclick="openUserList()">Manage Users</button>
-      <button onclick="openPwReqs()">Password Requests</button>
-      <button onclick="closeOverlay()">Close</button>
-    </div>
-
-    <!-- USERS -->
-    <div class="panel hidden" id="panel-users">
-      <h2>Select a User</h2>
-      <div id="userList"></div>
-      <button onclick="toPanel('panel-main')">← Back</button>
-    </div>
-
-    <!-- PER-USER -->
-    <div class="panel hidden" id="panel-actions">
-      <h2 id="uaTitle"></h2>
-      <div id="actionButtons"></div>
-      <button onclick="toPanel('panel-users')">← Back</button>
-    </div>
-
-    <!-- PASSWORD REQUESTS -->
-    <div class="panel hidden" id="panel-requests">
-      <h2>Password Requests</h2>
-      <div id="reqList"></div>
-      <button onclick="toPanel('panel-main')">← Back</button>
-    </div>
-  </div>
-
   <script>
-    /* ───────── helpers & DB scaffold ───────── */
-    const $ = id => document.getElementById(id);
-    const db = JSON.parse(localStorage.getItem('glitchStudio')) || { users: [], videos: [], requests: [], history: [] };
-    const save = () => localStorage.setItem('glitchStudio', JSON.stringify(db));
-
-    /* current user */
-    const me = db.users.find(u => u.email === sessionStorage.getItem('currentUser'));
-    if (!me) { location.href = 'login.html'; }
-    if (me.banned || (me.suspendedUntil && Date.now() < me.suspendedUntil)) {
-      location.href = 'banned.html';
-    }
-
-    /* ───────── populate profile ───────── */
-    function refreshProfile() {
-      // Set the profile title as "[Display]'s Profile"
-      $('#profileTitle').textContent = me.display + "'s Profile";
-      $('#roleLine').textContent = `Role: ${me.role}${me.premium ? ' • Premium' : ''}`;
-    }
-    refreshProfile();
-
-    /* pinned vids grid */
-    function renderPins() {
-      const box = $('pinGrid'); 
-      box.innerHTML = '';
-      db.videos.filter(v => me.pinned && me.pinned.includes(v.id)).forEach(v => {
-        const d = document.createElement('div');
-        d.className = 'pinCard';
-        d.innerHTML = `<img class="thumb" src="${v.thumb}" alt="${v.title}"><p style="padding:0.4rem 0.5rem;font-size:0.75rem">${v.title}</p>`;
-        box.appendChild(d);
-      });
-    }
-    renderPins();
-
-    /* New: Render Things I've Uploaded */
-    function renderUploaded() {
-      const box = $('uploadedGrid');
-      box.innerHTML = '';
-      db.videos.filter(v => v.uploader === me.email).forEach(v => {
-        const d = document.createElement('div');
-        d.className = 'pinCard';
-        d.innerHTML = `<img class="thumb" src="${v.thumb}" alt="${v.title}"><p style="padding:0.4rem 0.5rem;font-size:0.75rem">${v.title}</p>`;
-        box.appendChild(d);
-      });
-    }
-    renderUploaded();
-
-    /* New: Render History (assumes db.history is an array of video IDs) */
-    function renderHistory() {
-      const box = $('historyList');
-      box.innerHTML = '';
-      if (db.history && db.history.length > 0) {
-        db.history.forEach(videoId => {
-          const video = db.videos.find(v => v.id === videoId);
+    window.addEventListener("load", function () {
+      const $ = id => document.getElementById(id);
+      
+      // Load the database from localStorage.
+      const db = JSON.parse(localStorage.getItem('glitchStudio')) || { users: [], videos: [], requests: [], history: [] };
+      
+      // Retrieve the current user from sessionStorage.
+      const me = db.users.find(u => u.email === sessionStorage.getItem('currentUser'));
+      if (!me) { location.href = "login.html"; return; }
+      if (me.banned || (me.suspendedUntil && Date.now() < me.suspendedUntil)) {
+        location.href = "banned.html"; return;
+      }
+      
+      function refreshProfile() {
+        $("profileTitle").textContent = me.display + "'s Profile";
+        $("roleLine").textContent = `Role: ${me.role}${me.premium ? " • Premium" : ""}`;
+      }
+      refreshProfile();
+      
+      // Render pinned videos.
+      function renderPins() {
+        const box = $("pinGrid");
+        box.innerHTML = "";
+        (me.pinned || []).forEach(id => {
+          const video = db.videos.find(v => v.id === id);
           if (video) {
-            const d = document.createElement('div');
-            d.className = 'userRow';
-            d.style.cursor = 'default';
-            d.textContent = video.title;
+            const d = document.createElement("div");
+            d.className = "pinCard";
+            d.innerHTML = `<img class="thumb" src="${video.thumb}" alt="${video.title}"><p style="padding:0.4rem 0.5rem;font-size:0.75rem">${video.title}</p>`;
             box.appendChild(d);
           }
         });
-      } else {
-        box.innerHTML = '<p>No history available.</p>';
       }
-    }
-    renderHistory();
-
-    /* premium toggle visibility */
-    if (me.premium) { $('#btnBuyPrem').classList.add('hidden'); $('#btnUnsubPrem').classList.remove('hidden'); }
-    if (me.role !== 'user') { $('#btnReqMod').classList.add('hidden'); }
-    if (['mod', 'admin'].includes(me.role)) { $('#btnModMenu').classList.remove('hidden'); }
-
-    /* ───────── basic buttons ───────── */
-    $('#btnLogout').onclick = () => { sessionStorage.removeItem('currentUser'); location.href = 'index.html'; };
-    $('#btnReqMod').onclick = () => alert('Moderator request sent!');
-    $('#btnBuyPrem').onclick = () => alert('Premium subscription request sent!');
-    $('#btnUnsubPrem').onclick = () => alert('Premium unsubscribe request sent!');
-
-    /* username change (max 2 per 30 days) */
-    const THIRTY_DAYS = 30 * 24 * 3600 * 1000;
-    function canChangeName() {
-      const cutoff = Date.now() - THIRTY_DAYS;
-      return me.usernameChanges.filter(t => t > cutoff).length < 2;
-    }
-    $('#btnChgName').onclick = () => {
-      if (!canChangeName()) { return alert('Username can only be changed twice per 30 days.'); }
-      const n = prompt('New display name', me.display);
-      if (n && n.trim()) {
-        me.display = n.trim();
-        me.usernameChanges.push(Date.now());
-        save();
-        refreshProfile();
-        alert('Username updated!');
+      renderPins();
+      
+      // Render uploaded videos.
+      function renderUploaded() {
+        const box = $("uploadedGrid");
+        box.innerHTML = "";
+        db.videos.filter(v => v.uploader === me.email).forEach(v => {
+          const d = document.createElement("div");
+          d.className = "pinCard";
+          d.innerHTML = `<img class="thumb" src="${v.thumb}" alt="${v.title}"><p style="padding:0.4rem 0.5rem;font-size:0.75rem">${v.title}</p>`;
+          box.appendChild(d);
+        });
       }
-    };
-
-    /* password change request */
-    $('#btnChgPw').onclick = () => {
-      if (me.pwReq) { return alert('Password-change request already pending.'); }
-      me.pwReq = true;
-      db.requests.push({ id: Date.now(), type: 'pw', user: me.email, status: 'pending' });
-      save();
-      alert('Password-change request submitted for mod approval.');
-    };
-
-    /* delete */
-    $('#btnDelete').onclick = () => {
-      if (confirm('Deleting your account removes all uploads. Proceed?')) {
-        db.users = db.users.filter(u => u !== me);
-        db.videos = db.videos.filter(v => v.uploader !== me.email);
-        save();
-        sessionStorage.clear();
-        location.href = 'index.html';
-      }
-    };
-
-    /* ───────── overlay navigation ───────── */
-    $('#btnModMenu').onclick = () => { $('#overlay').style.display = 'flex'; toPanel('panel-main'); };
-    function closeOverlay() { $('#overlay').style.display = 'none'; }
-    const panels = ['panel-main', 'panel-users', 'panel-actions', 'panel-requests'];
-    function toPanel(id) { panels.forEach(p => $(p).classList.toggle('hidden', p !== id)); }
-
-    /* ───────── user list ───────── */
-    function openUserList() {
-      toPanel('panel-users');
-      const list = $('userList'); list.innerHTML = '';
-      db.users.forEach(u => {
-        const row = document.createElement('div'); row.className = 'userRow';
-        row.textContent = `${u.display} — ${u.role}${u.premium ? ' (P)' : ''}${u.blocked.includes(me.email) ? ' [blocks you]' : ''}`;
-        row.onclick = () => openUserActions(u);
-        list.appendChild(row);
-      });
-    }
-
-    /* ───────── per-user actions ───────── */
-    let target = null;
-    function openUserActions(u) {
-      target = u;
-      $('#uaTitle').textContent = `${u.display}  [${u.role}${u.premium ? ' • Premium' : ''}]`;
-      const box = $('actionButtons'); box.innerHTML = '';
-
-      const add = (txt, fn, cls = '') => {
-        const b = document.createElement('button');
-        b.textContent = txt;
-        if (cls) b.classList.add(cls);
-        b.onclick = fn;
-        box.appendChild(b);
-      };
-
-      /* block / unblock */
-      if (me.email !== u.email) {
-        if (me.blocked.includes(u.email)) {
-          add('Unblock User', () => { me.blocked = me.blocked.filter(e => e !== u.email); save(); alert('Unblocked'); openUserList(); });
+      renderUploaded();
+      
+      // Render history.
+      function renderHistory() {
+        const box = $("historyList");
+        box.innerHTML = "";
+        if (db.history && db.history.length > 0) {
+          db.history.forEach(videoId => {
+            const video = db.videos.find(v => v.id === videoId);
+            if (video) {
+              const d = document.createElement("div");
+              d.className = "userRow";
+              d.textContent = video.title;
+              box.appendChild(d);
+            }
+          });
         } else {
-          add('Block User', () => { me.blocked.push(u.email); save(); alert('Blocked'); openUserList(); }, 'danger');
+          box.innerHTML = "<p>No history available.</p>";
         }
       }
-
-      /* standard actions */
-      add('Delete Account', () => {
-        if (confirm('Remove user and their uploads?')) {
-          db.users = db.users.filter(x => x !== u);
-          db.videos = db.videos.filter(v => v.uploader !== u.email);
-          save(); alert('Account deleted.'); openUserList();
-        }
-      }, 'danger');
-
-      add('Suspend Account', suspendDialog);
-      add('Change Username', () => {
-        const n = prompt('New display name', u.display);
-        if (n) { u.display = n; save(); openUserActions(u); }
-      });
-      add('Set New Password', () => {
-        const n = prompt('New password');
-        if (n) { u.password = n; u.pwReq = false; save(); alert('Password updated'); }
-      });
-
-      /* admin-only */
-      if (me.role === 'admin') {
-        if (u.role !== 'mod') {
-          add('Grant Moderator', () => { u.role = 'mod'; save(); openUserActions(u); });
-        } else {
-          add('Remove Moderator', () => { u.role = 'user'; save(); openUserActions(u); }, 'danger');
-        }
-        if (!u.premium) {
-          add('Grant Premium', () => { u.premium = true; save(); openUserActions(u); });
-        } else {
-          add('Remove Premium', () => { u.premium = false; save(); openUserActions(u); }, 'danger');
-        }
+      renderHistory();
+      
+      // Adjust visibility based on the user's data.
+      if (me.premium) {
+        $("btnBuyPrem").classList.add("hidden");
+        $("btnUnsubPrem").classList.remove("hidden");
       }
-      toPanel('panel-actions');
-    }
-
-    /* suspend dialog */
-    function suspendDialog() {
-      const opts = [
-        ['1 Hour', 3600e3],
-        ['24 Hours', 24 * 3600e3],
-        ['3 Days', 3 * 24 * 3600e3],
-        ['7 Days', 7 * 24 * 3600e3],
-        ['14 Days', 14 * 24 * 3600e3],
-        ['30 Days', 30 * 24 * 3600e3],
-        ['Permanent', 'perm']
-      ];
-      let menu = 'Choose suspension length:\n';
-      opts.forEach((o, i) => menu += `[${i}] ${o[0]}\n`);
-      const idx = prompt(menu); if (idx === null) return;
-      const sel = opts[idx]; if (!sel) return alert('Invalid choice.');
-      if (sel[1] === 'perm') { target.banned = true; } else { target.suspendedUntil = Date.now() + sel[1]; }
-      save(); alert(`User suspended: ${sel[0]}`);
-    }
-
-    /* ───────── password requests panel ───────── */
-    function openPwReqs() {
-      toPanel('panel-requests');
-      const box = $('reqList'); box.innerHTML = '';
-      db.requests.filter(r => r.type === 'pw' && r.status === 'pending').forEach(r => {
-        const usr = db.users.find(u => u.email === r.user);
-        if (!usr) { r.status = 'gone'; return; }
-        const row = document.createElement('div'); row.className = 'userRow';
-        row.textContent = `${usr.display} (${usr.email}) – wants new password`;
-        row.onclick = () => handlePwReq(r, usr);
-        box.appendChild(row);
-      });
-      if (!box.innerHTML) box.innerHTML = '<p>No pending requests.</p>';
-    }
-
-    function handlePwReq(req, usr) {
-      const newPw = prompt(`Set new password for ${usr.display}:`);
-      if (!newPw) return;
-      usr.password = newPw; usr.pwReq = false;
-      req.status = 'done'; save();
-      alert('Password updated.');
-      openPwReqs();
-    }
+      if (me.role !== "user") {
+        $("btnReqMod").classList.add("hidden");
+      }
+      if (["mod", "admin"].includes(me.role)) {
+        $("btnModMenu").classList.remove("hidden");
+      }
+    });
   </script>
-
 </body>
 </html>
