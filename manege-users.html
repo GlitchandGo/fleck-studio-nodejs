@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Users – GLITCH Studio</title>
+  <style>
+    body {
+      background: #000;
+      color: #00ff88;
+      font-family: 'Courier New', monospace;
+      padding: 2rem;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .userRow {
+      border-bottom: 1px solid #00ff88;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    .userRow:hover {
+      background: #002610;
+    }
+    button {
+      background: #001f10;
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      padding: 0.5rem 1rem;
+      margin: 0.4rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #userDetail {
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>GLITCH Studio – Manage Users</h1>
+  <div id="userList"></div>
+
+  <div id="userDetail" style="display:none;">
+    <h2 id="selectedUserName"></h2>
+    <p id="selectedUserInfo"></p>
+    <button onclick="changeUsername()">Change Username</button>
+    <button onclick="changePassword()">Change Password</button>
+    <button onclick="suspendUser()">Suspend Account</button>
+    <button onclick="deleteAccount()">Delete Account</button>
+    <br /><br />
+    <button onclick="goBack()">← Back to User List</button>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    let db = JSON.parse(localStorage.getItem("glitchStudio")) || { users: [], videos: [] };
+    let selectedUser = null;
+
+    function loadUsers() {
+      const box = $("userList");
+      box.innerHTML = "";
+      db.users.forEach(u => {
+        const div = document.createElement("div");
+        div.className = "userRow";
+        div.textContent = `${u.display} (${u.email}) — ${u.role}`;
+        div.onclick = () => selectUser(u);
+        box.appendChild(div);
+      });
+    }
+
+    function selectUser(user) {
+      selectedUser = user;
+      $("userList").style.display = "none";
+      $("userDetail").style.display = "block";
+      $("selectedUserName").textContent = user.display;
+      $("selectedUserInfo").innerHTML = `
+        Email: ${user.email}<br>
+        Role: ${user.role}<br>
+        Premium: ${user.premium ? "Yes" : "No"}
+      `;
+    }
+
+    function goBack() {
+      selectedUser = null;
+      $("userDetail").style.display = "none";
+      $("userList").style.display = "block";
+    }
+
+    function save() {
+      localStorage.setItem("glitchStudio", JSON.stringify(db));
+    }
+
+    function changeUsername() {
+      const name = prompt("Enter new username:", selectedUser.display);
+      if (name && name.trim()) {
+        selectedUser.display = name.trim();
+        save();
+        alert("Username updated.");
+        selectUser(selectedUser);
+        loadUsers();
+      }
+    }
+
+    function changePassword() {
+      const pw = prompt("New password (min 8 characters):");
+      if (!pw || pw.length < 8) return alert("Password too short.");
+      selectedUser.password = pw;
+      save();
+      alert("Password updated.");
+    }
+
+    function suspendUser() {
+      const options = [
+        ["1 Hour", 3600e3],
+        ["24 Hours", 24*3600e3],
+        ["3 Days", 3*24*3600e3],
+        ["7 Days", 7*24*3600e3],
+        ["14 Days", 14*24*3600e3],
+        ["30 Days", 30*24*3600e3],
+        ["Permanent", "perm"]
+      ];
+      let promptText = "Choose suspension:\n";
+      options.forEach((opt, i) => { promptText += `[${i}] ${opt[0]}\n`; });
+      const idx = prompt(promptText);
+      if (idx === null) return;
+      const sel = options[parseInt(idx)];
+      if (!sel) return alert("Invalid selection.");
+      if (sel[1] === "perm") selectedUser.banned = true;
+      else selectedUser.suspendedUntil = Date.now() + sel[1];
+      save();
+      alert(`User suspended: ${sel[0]}`);
+    }
+
+    function deleteAccount() {
+      if (!confirm("Delete this user’s account? This is permanent.")) return;
+      if (!confirm("Really delete their account and videos?")) return;
+      db.users = db.users.filter(u => u !== selectedUser);
+      db.videos = db.videos.filter(v => v.uploader !== selectedUser.email);
+      save();
+      alert("Account deleted.");
+      goBack();
+      loadUsers();
+    }
+
+    window.onload = loadUsers;
+  </script>
+</body>
+</html>
