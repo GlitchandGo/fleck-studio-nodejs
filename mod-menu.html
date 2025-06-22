@@ -2,22 +2,159 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Mod Menu – GLITCH Studio</title>
+  <title>Mod Menu - GLITCH Studio</title>
   <style>
-    body { font-family: sans-serif; padding: 2rem; background: #0b0b13; color: #f3f3f5; }
-    button { padding: 0.6rem 1rem; font-size: 1rem; margin-top: 1rem; }
+    body {
+      background: #000;
+      color: #00ff88;
+      font-family: 'Courier New', monospace;
+      padding: 2rem;
+      margin: 0;
+    }
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    button {
+      background: #001f10;
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      padding: 0.5rem 1rem;
+      margin: 0.5rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .list-item {
+      border-bottom: 1px solid #00ff88;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    .list-item:hover {
+      background: #002610;
+    }
+    a {
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <h1>Moderator Console</h1>
-  <!-- You may add additional mod options here -->
-  <button id="btnBack">Go Back to Accounts</button>
+  <h1>Welcome, <span id="modName">Mod</span></h1>
+
+  <!-- Main Menu Screen -->
+  <div id="mainScreen" class="screen active">
+    <p style="text-align:center;">Select an option:</p>
+    <button onclick="showScreen('reqScreen')">Manage Requests</button>
+    <!-- Manage Users takes you to your separate file -->
+    <a href="manage-users.html"><button>Manage Users</button></a>
+    <button onclick="location.href='accounts.html'">Exit</button>
+  </div>
+
+  <!-- Manage Requests Screen -->
+  <div id="reqScreen" class="screen">
+    <h2>Pending Requests</h2>
+    <div id="reqList"></div>
+    <button onclick="showScreen('mainScreen')">Back</button>
+  </div>
+
+  <!-- Request Detail Screen -->
+  <div id="reqDetailScreen" class="screen">
+    <h2>Request Detail</h2>
+    <div id="reqDetail"></div>
+    <button id="approveReqBtn">Approve</button>
+    <button id="denyReqBtn">Deny</button>
+    <button onclick="showScreen('reqScreen')">Back</button>
+  </div>
+
   <script>
-    window.onload = function(){
-      document.getElementById("btnBack").addEventListener("click", function(){
-        location.href = "accounts.html";
+    // Utility: switch between screens.
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if (id === 'reqScreen') loadRequests();
+    }
+    
+    // Load the DB from localStorage.
+    let db = JSON.parse(localStorage.getItem("glitchStudio")) || { users: [], requests: [] };
+    function saveDB() {
+      localStorage.setItem("glitchStudio", JSON.stringify(db));
+    }
+    
+    // For demo: if no requests exist, add sample ones.
+    if (db.requests.length === 0) {
+      db.requests.push({ id: Date.now(), type: "unban", user: "user1@example.com", status: "pending" });
+      db.requests.push({ id: Date.now() + 1, type: "flaggedVideo", videoId: "vid123", user: "user2@example.com", status: "pending" });
+      saveDB();
+    }
+    
+    // Set the mod's name.
+    window.addEventListener("load", function() {
+      let currentUserEmail = sessionStorage.getItem("currentUser") || "mod@example.com";
+      let currentUser = db.users.find(u => u.email === currentUserEmail) || { display: "Mod" };
+      document.getElementById("modName").textContent = currentUser.display;
+    });
+    
+    // Request Management
+    let currentRequest = null;
+    
+    function loadRequests() {
+      const reqListDiv = document.getElementById("reqList");
+      reqListDiv.innerHTML = "";
+      let pending = db.requests.filter(r => r.status === "pending");
+      if (pending.length === 0) {
+        reqListDiv.innerHTML = "<p>No pending requests.</p>";
+        return;
+      }
+      pending.forEach(r => {
+        let item = document.createElement("div");
+        item.className = "list-item";
+        if (r.type === "unban") {
+          item.textContent = "Request to unban (" + r.user + ")";
+        } else if (r.type === "flaggedVideo") {
+          item.textContent = "Flagged Video (" + r.videoId + ") from " + r.user;
+        } else {
+          item.textContent = "Unknown request from " + r.user;
+        }
+        item.addEventListener("click", () => showRequestDetail(r));
+        reqListDiv.appendChild(item);
       });
-    };
+    }
+    
+    function showRequestDetail(r) {
+      currentRequest = r;
+      let detailDiv = document.getElementById("reqDetail");
+      if (r.type === "unban") {
+        detailDiv.textContent = "User " + r.user + " requests to be unbanned.";
+      } else if (r.type === "flaggedVideo") {
+        detailDiv.textContent = "Video " + r.videoId + " from " + r.user + " has been flagged.";
+      } else {
+        detailDiv.textContent = "Unknown request.";
+      }
+      showScreen("reqDetailScreen");
+    }
+    
+    document.getElementById("approveReqBtn").addEventListener("click", function() {
+      if (currentRequest) {
+        currentRequest.status = "approved";
+        saveDB();
+        alert("Request approved.");
+        showScreen("reqScreen");
+      }
+    });
+    
+    document.getElementById("denyReqBtn").addEventListener("click", function() {
+      if (currentRequest) {
+        currentRequest.status = "denied";
+        saveDB();
+        alert("Request denied.");
+        showScreen("reqScreen");
+      }
+    });
   </script>
 </body>
 </html>
